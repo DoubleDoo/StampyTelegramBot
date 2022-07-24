@@ -1,0 +1,22 @@
+version: '3.4'
+
+services:
+  postgres:
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: "Collections"
+      POSTGRES_USER: "bot"
+      POSTGRES_PASSWORD: "7140043"
+      PGDATA: "/var/lib/postgresql/data/data/bd"
+    volumes:
+      - .:/docker-entrypoint-initdb.d
+      - .:/var/lib/postgresql/data
+    ports:
+      -  5432:5432
+  stampytelegrambot:
+    image: ${DOCKER_REGISTRY-}stampytelegrambot
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
