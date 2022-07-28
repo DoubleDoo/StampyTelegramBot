@@ -1,17 +1,17 @@
 CREATE TABLE public."Coin"
 (
     id uuid NOT NULL,
-    name text NOT NULL,
+    name text,
     series text,
     date date,
     catalogId text,
-    nominal text NOT NULL,
-    diameter text,
+    nominal money,
+    diameter double precision,
     metal text,
-    circulation text,
+    circulation bigint,
     obverse uuid,
     reverse uuid,
-    link text NOT NULL,
+    link text,
     PRIMARY KEY (id)
 );
 
@@ -21,7 +21,7 @@ ALTER TABLE IF EXISTS public."Coin"
 CREATE TABLE IF NOT EXISTS public."Image"
 (
     id uuid NOT NULL,
-    link text COLLATE pg_catalog."default" NOT NULL,
+    link text COLLATE pg_catalog."default",
     CONSTRAINT image_pkey PRIMARY KEY (id)
 )
 
@@ -34,20 +34,20 @@ ALTER TABLE IF EXISTS public."Image"
     CREATE TABLE public."Stamp"
 (
     id uuid NOT NULL,
-    name text NOT NULL,
+    name text,
     date date,
     set text,
-    nominal text NOT NULL,
+    nominal money,
     format text,
     protection text,
-    circulation text,
+    circulation bigint,
     perforation text,
     paper text,
     printMetod text,
     design text,
     country uuid,
     obverse uuid,
-    link text NOT NULL,
+    link text,
     PRIMARY KEY (id)
 );
 
