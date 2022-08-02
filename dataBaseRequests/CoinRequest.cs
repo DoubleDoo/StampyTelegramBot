@@ -8,10 +8,10 @@ public static class CoinRequest
 	private static string tableName = "Coin";
 	static CoinRequest() { }
 
-	public static Coin createCoin(string name, DateOnly date, string series, string catalogid, decimal nominal, double diameter, string metal, long circulation, string obverseLink, string reverseLink, string link)
+	public static Coin createCoin(string name, DateOnly date, string series, string catalogid, decimal nominal, double firstdimention, double seconddimention, string metal, long circulation, string obverseLink, string reverseLink, string link)
 	{
-		Coin res = new Coin(name, date, series, catalogid, nominal, diameter, metal, circulation, obverseLink, reverseLink, link);
-		NpgsqlDataReader rd = PostgreSQLSingle.sendSQL($"INSERT INTO public.\"" + tableName + "\"(id, name, date, series, catalogid, nominal, diameter, metal, circulation, obverse, reverse, link)" +
+		Coin res = new Coin(name, date, series, catalogid, nominal, firstdimention,seconddimention, metal, circulation, obverseLink, reverseLink, link);
+		NpgsqlDataReader rd = PostgreSQLSingle.sendSQL($"INSERT INTO public.\"" + tableName + "\"(id, name, date, series, catalogid, nominal, firstDimention, secondDimention, metal, circulation, obverse, reverse, link)" +
 		"VALUES(" +
 			$"'{ res.Id.ToString() }'," +
 			$"'{ res.Name }'," +
@@ -19,7 +19,8 @@ public static class CoinRequest
 			$"'{ res.Series }'," +
 			$"'{ res.CatalogId }'," +
 			$"'{ res.Nominal.ToString() }'," +
-			$"'{ res.Diameter.ToString() }'," +
+			$"'{ res.FirstDimension.ToString() }'," +
+			$"'{ res.SecondDimension.ToString() }'," +
 			$"'{ res.Metal }'," +
 			$"'{ res.Circulation.ToString() }'," +
 			$"'{ res.Obverse.Id.ToString() }'," +
@@ -43,7 +44,8 @@ public static class CoinRequest
 						   rd.GetString(rd.GetOrdinal("series")),
 					 	   rd.GetString(rd.GetOrdinal("catalogid")),
 					 	   rd.GetDecimal(rd.GetOrdinal("nominal")),
-						   rd.GetDouble(rd.GetOrdinal("diameter")),
+						   rd.GetDouble(rd.GetOrdinal("firstDimention")),
+						   rd.GetDouble(rd.GetOrdinal("secondDimention")),
 						   rd.GetString(rd.GetOrdinal("metal")),
 						   rd.GetInt64(rd.GetOrdinal("circulation")),
 						   rd.GetGuid(rd.GetOrdinal("obverse")),
@@ -68,7 +70,8 @@ public static class CoinRequest
 						   rd.GetString(rd.GetOrdinal("series")),
 						   rd.GetString(rd.GetOrdinal("catalogid")),
 						   rd.GetDecimal(rd.GetOrdinal("nominal")),
-						   rd.GetDouble(rd.GetOrdinal("diameter")),
+							rd.GetDouble(rd.GetOrdinal("firstDimention")),
+						   rd.GetDouble(rd.GetOrdinal("secondDimention")),
 						   rd.GetString(rd.GetOrdinal("metal")),
 						   rd.GetInt64(rd.GetOrdinal("circulation")),
 						   rd.GetGuid(rd.GetOrdinal("obverse")),

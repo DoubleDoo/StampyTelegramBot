@@ -40,11 +40,16 @@ public class Coin
 	{
 		get { return nominal; }
 	}
-	private double diameter;
-
-	public double Diameter
+	private double firstDimension;
+	public double FirstDimension
 	{
-		get { return diameter; }
+		get { return firstDimension; }
+	}
+
+	private double secondDimension;
+	public double SecondDimension
+	{
+		get { return secondDimension; }
 	}
 	private string metal;
 
@@ -83,7 +88,7 @@ public class Coin
 		get { return link; }
 	}
 
-	public Coin(string name, DateOnly date, string series, string catalogid, decimal nominal, double diameter, string metal, long circulation, string obverseLink, string reverseLink, string link)
+	public Coin(string name, DateOnly date, string series, string catalogid, decimal nominal, double firstdimention, double seconddimention, string metal, long circulation, string obverseLink, string reverseLink, string link)
 	{
 		this.id = Guid.NewGuid();
 		this.name = name;
@@ -91,7 +96,8 @@ public class Coin
 		this.series = series;
 		this.catalogId = catalogid;
 		this.nominal = nominal;
-		this.diameter = diameter;
+		this.firstDimension = firstdimention;
+		this.secondDimension = seconddimention;
 		this.metal = metal;
 		this.circulation = circulation;
 		this.reverse = createImage(reverseLink);
@@ -99,7 +105,7 @@ public class Coin
 		this.link = link;
 	}
 
-	public Coin(Guid id, string name, DateOnly date, string series, string catalogid, decimal nominal, double diameter, string metal, long circulation, Guid obverse, Guid reverse, string link)
+	public Coin(Guid id, string name, DateOnly date, string series, string catalogid, decimal nominal, double firstdimention, double seconddimention, string metal, long circulation, Guid obverse, Guid reverse, string link)
 	{
 		this.id = id;
 		this.name = name;
@@ -107,7 +113,8 @@ public class Coin
 		this.series = series;
 		this.catalogId = catalogid;
 		this.nominal = nominal;
-		this.diameter = diameter;
+		this.firstDimension = firstdimention;
+		this.secondDimension = seconddimention;
 		this.metal = metal;
 		this.circulation = circulation;
 		this.reverseGuid = reverse;
@@ -133,6 +140,17 @@ public class Coin
 
 	public override string ToString()
 	{
-		return base.ToString() + id + "\n" + name + "\n";
+		return  "Coin: "+ this.id +
+			"\nName:" + this.name+
+			"\nDate:" + this.date +
+			"\nSeries:" + this.series +
+			"\nCatalogId:" + this.catalogId +
+			"\nNominal:" + this.nominal +
+			"\nDiameter:" + this.firstDimension +
+			"\nDiameter2:" + this.secondDimension +
+			"\nMetal:" + this.metal +
+			"\nCirculation:" + this.circulation +
+			"\nLink:" + this.link +
+			"\n";
 	}
 }

@@ -2,8 +2,10 @@
 using Npgsql;
 
 
-Cbr.getPageLinks();
-
+//Console.WriteLine(new DateOnly(1999, 6, 16).ToString());
+List<Coin> coins = Cbr.getAllObjDataFromLink();
+//Coin d=Cbr.getObjDataFromLink("https://www.cbr.ru/cash_circulation/memorable_coins/coins_base/ShowCoins/?cat_num=5216-0089");
+//Console.WriteLine(d.ToString());
 /*
 Console.WriteLine(Request.proxyRequest("https://www.cbr.ru/cash_circulation/memorable_coins/coins_base/ShowCoins/?cat_num=5714-0084"));
 Console.WriteLine(Request.nonProxyRequest("https://www.cbr.ru/cash_circulation/memorable_coins/coins_base/ShowCoins/?cat_num=5714-0084"));
