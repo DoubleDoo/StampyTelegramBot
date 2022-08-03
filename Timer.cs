@@ -15,13 +15,13 @@ public static class Timer
     {
         Console.WriteLine("Init");
         StartWaitTimer();
-        Console.ReadLine();
     }
 
 
     public static void StartWaitTimer()
     {
         SetWaitTimer();
+        Console.ReadLine();
     }
 
     public static void StartPeriodTimer()
@@ -34,9 +34,9 @@ public static class Timer
 
     private static void SetWaitTimer()
     {
-        processTimer = new System.Timers.Timer(5000);
-        processTimer.Elapsed += WaitFinishedEvent;
-        processTimer.Enabled = true;
+        initTimer = new System.Timers.Timer(60000);
+        initTimer.Elapsed += WaitFinishedEvent;
+        initTimer.Enabled = true;
     }
 
     private static void SetPeriodTimer()
@@ -55,8 +55,15 @@ public static class Timer
 
     private static void WaitFinishedEvent(Object source, ElapsedEventArgs e)
     {
-        processTimer.Stop();
-        processTimer.Dispose();
+        var di = new DirectoryInfo(Environment.CurrentDirectory + @"/data/img");
+        Console.WriteLine(Environment.CurrentDirectory + @"/data/img");
+        if (!di.Exists)
+        {
+            Console.WriteLine("Created");
+            di.Create();
+        }
+        initTimer.Stop();
+        initTimer.Dispose();
         Console.WriteLine("Finished");
         StartPeriodTimer();
     }
