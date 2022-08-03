@@ -87,7 +87,7 @@ public static class Cbr
 
     public static List<Coin> getAllObjDataFromLink()
     {
-        List<Coin> coins=new List<Coin>();
+        List<Coin> coins = new List<Coin>();
         foreach (string lnk in getPageLinks())
         {
             if (lnk != "https://www.cbr.ru/cash_circulation/memorable_coins/coins_base/ShowCoins/?cat_num=3213-0010")
@@ -99,6 +99,32 @@ public static class Cbr
         }
         return coins;
     }
+
+    public static List<Coin> getNewLinks()
+    {
+        List<string> links = getPageLinks();
+        List<Coin> cns = CoinRequest.getCoins();
+        List<Coin> coins = new List<Coin>();
+        foreach (Coin coin in cns)
+        {
+            int indx = links.IndexOf(coin.Link);
+            if (indx!=-1)
+            {
+                links.RemoveAt(indx);
+            }
+        }
+        foreach (string lnk in links)
+        {
+            if (lnk != "https://www.cbr.ru/cash_circulation/memorable_coins/coins_base/ShowCoins/?cat_num=3213-0010")
+            {
+                Coin c = getObjDataFromLink(lnk);
+                Console.WriteLine(c.ToString());
+                coins.Add(c);
+            }
+        }
+        return coins;
+    }
+   
 
     public static string getNameFromHtml(HtmlDocument doc)
     {

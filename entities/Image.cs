@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 
 public class Image
 {
@@ -29,8 +30,12 @@ public class Image
 
 	private void downloadImage(Guid id)
     {
-
-    }
+		using (WebClient client = new WebClient())
+		{
+			client.DownloadFile(this.link, Environment.CurrentDirectory+"/data/img/"  + id+".jpg");
+			Console.WriteLine(Environment.CurrentDirectory+ "/data/img/" + id + ".jpg");
+		}
+	}
 
     public override string ToString()
     {
