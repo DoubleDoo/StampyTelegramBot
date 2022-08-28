@@ -6,14 +6,17 @@ public static class Timer
 {
     static System.Timers.Timer processTimer;
     static System.Timers.Timer initTimer;
+    static Telegram tg;
     static Timer()
     {
-
+        tg = new Telegram();
+        //await tg.process();
     }
 
-    public static void Process()
+    public static async void Process()
     {
         Console.WriteLine("Init");
+        await tg.process();
         StartWaitTimer();
     }
 
@@ -49,7 +52,10 @@ public static class Timer
 
     private static void OnTimedEvent(Object source, ElapsedEventArgs e)
     {
-        Cbr.getNewLinks();
+        foreach (Coin cn in Cbr.getNewLinks())
+        {
+            tg.sendmessage(tg.getChannelDto(0), cn.Name, new Image[] { cn.Obverse, cn.Reverse });
+        }
         Console.WriteLine("Tick");
     }
 

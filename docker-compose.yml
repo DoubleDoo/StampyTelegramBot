@@ -21,8 +21,11 @@ services:
     image: ${DOCKER_REGISTRY-}stampytelegrambot
     volumes:
       - data:/app/data
+      - ./channelsSettings:/app/channelsSettings
     build:
       context: .
       dockerfile: Dockerfile
+    stdin_open: true
+    tty: true   
     depends_on:
       - postgres
