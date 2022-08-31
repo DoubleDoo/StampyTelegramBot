@@ -18,28 +18,19 @@ public static class PostgreSQLSingle
 	private static string password = "7140043";
 	static PostgreSQLSingle()
 	{
-		dbConnection = connectToDb();
+
 	}
 
-	public static  NpgsqlConnection connectToDb()
+	public static async Task connectToDb()
     {
 		string ConnectionString = $"Host={host};Port={port};Username={login};Password={password};Database={dataBase}";
-		NpgsqlConnection res = new NpgsqlConnection(ConnectionString);
-		res.Open();
-		return res;
+		dbConnection = new NpgsqlConnection(ConnectionString);
+		await dbConnection.OpenAsync();
 	}
 
-	public static NpgsqlDataReader sendSQL(string comand)
+	public static async Task<NpgsqlDataReader> sendSQL(string comand)
 	{
 		NpgsqlCommand cmd = new NpgsqlCommand(comand, dbConnection);
-		NpgsqlDataReader reader = cmd.ExecuteReader();
-		return reader;
+		return await cmd.ExecuteReaderAsync();
 	}
-
-	/*
-	public static void closeConnection()
-	{
-		dbConnection.Close();
-	}
-	*/
 }

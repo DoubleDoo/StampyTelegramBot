@@ -100,8 +100,8 @@ public class Coin
 		this.secondDimension = seconddimention;
 		this.metal = metal;
 		this.circulation = circulation;
-		this.reverse = createImage(reverseLink);
-		this.obverse = createImage(obverseLink);
+		this.reverse = new Image(reverseLink);
+		this.obverse = new Image(obverseLink);
 		this.link = link;
 	}
 
@@ -122,26 +122,41 @@ public class Coin
 		this.link = link;
 	}
 
-	public void connectImages()
+
+	public async Task appendImages()
 	{
-		this.reverse = loadImages(this.reverseGuid);
-		this.obverse = loadImages(this.obverseGuid);
+		this.reverse = await loadImages(this.reverseGuid);
+		this.obverse = await loadImages(this.obverseGuid);
 	}
 
-	private Image createImage(string imagelink)
+	private async Task<Image> loadImages(Guid id)
 	{
-		return ImageRequest.createImage(imagelink);
+		return await ImageRequest.getImage(id);
 	}
 
-	private Image loadImages(Guid id)
+
+	public async Task post(channelDTO ch)
 	{
-		return ImageRequest.getImage(id);
+		var text = $"<a href=\"{this.Link}\">{this.Name}</a>\n\n" +
+				   $"<b>Каталожный номер : </b> {this.CatalogId}\n" +
+				   $"<b>Дата выпуска : </b> {this.Date}\n\n" +
+				   $"<b>Номинал : </b> {this.Nominal} руб.\n" +
+				   $"<b>Материал : </b> {this.Metal}\n" +
+				   $"<b>Тираж : </b> {this.Circulation}\n";
+		await Telegram.sendmessage(ch, text, new Image[] { this.Obverse, this.Reverse });
+	}
+
+	public async Task<Coin> load()
+	{
+		await this.reverse.load();
+		await this.obverse.load();
+		return await CoinRequest.createCoin(this);
 	}
 
 	public override string ToString()
 	{
-		return  "Coin: "+ this.id +
-			"\nName:" + this.name+
+		return "Coin: " + this.id +
+			"\nName:" + this.name +
 			"\nDate:" + this.date +
 			"\nSeries:" + this.series +
 			"\nCatalogId:" + this.catalogId +
@@ -154,3 +169,5 @@ public class Coin
 			"\n";
 	}
 }
+
+

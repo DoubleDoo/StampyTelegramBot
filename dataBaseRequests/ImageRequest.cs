@@ -8,39 +8,38 @@ public static class ImageRequest
 	private static string tableName = "Image";
 	static ImageRequest() {}
 
-	public static Image createImage(string link)
+	public static async Task<Image> createImage(Image obj)
 	{
-		Image res= new Image(link);
-		NpgsqlDataReader rd = PostgreSQLSingle.sendSQL("INSERT INTO public.\"" + tableName + "\"(id, link)" +
+		NpgsqlDataReader rd = await PostgreSQLSingle.sendSQL("INSERT INTO public.\"" + tableName + "\"(id, link)" +
 		"VALUES(" +
-			$"'{ res.Id.ToString() }'," +
-			$"'{ res.Link }'" +
+			$"'{ obj.Id.ToString() }'," +
+			$"'{ obj.Link }'" +
 			");");
-		rd.Dispose();
-		return res;
+		await rd.DisposeAsync();
+		return obj;
 	}
 
-	public static Image getImage(Guid id)
+	public static async Task<Image> getImage(Guid id)
 	{
-		NpgsqlDataReader rd = PostgreSQLSingle.sendSQL("SELECT * FROM public.\"" + tableName + "\" where id='"+id+"'");
+		NpgsqlDataReader rd = await PostgreSQLSingle.sendSQL("SELECT * FROM public.\"" + tableName + "\" where id='"+id+"'");
 		Image res=null;
 		while (rd.Read())
 		{
 			res=new Image(rd.GetGuid(rd.GetOrdinal("id")), rd.GetString(rd.GetOrdinal("link")));
 		}
-		rd.Dispose();
+		await rd.DisposeAsync();
 		return res;
 	}
 
-	public static List<Image> getImages()
+	public static async Task<List<Image>> getImages()
 	{
-		NpgsqlDataReader rd = PostgreSQLSingle.sendSQL("SELECT * FROM public.\"" + tableName + "\"");
+		NpgsqlDataReader rd = await PostgreSQLSingle.sendSQL("SELECT * FROM public.\"" + tableName + "\"");
 		List<Image> list = new List<Image>();
 		while (rd.Read())
 		{
 			list.Add(new Image(rd.GetGuid(rd.GetOrdinal("id")), rd.GetString(rd.GetOrdinal("link"))));
 		}
-		rd.Dispose();
+		await rd.DisposeAsync();
 		return list;
 	}
 }

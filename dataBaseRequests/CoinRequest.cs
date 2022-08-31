@@ -8,33 +8,32 @@ public static class CoinRequest
 	private static string tableName = "Coin";
 	static CoinRequest() { }
 
-	public static Coin createCoin(string name, DateOnly date, string series, string catalogid, decimal nominal, double firstdimention, double seconddimention, string metal, long circulation, string obverseLink, string reverseLink, string link)
+	public static async Task<Coin> createCoin(Coin obj)
 	{
-		Coin res = new Coin(name, date, series, catalogid, nominal, firstdimention,seconddimention, metal, circulation, obverseLink, reverseLink, link);
-		NpgsqlDataReader rd = PostgreSQLSingle.sendSQL($"INSERT INTO public.\"" + tableName + "\"(id, name, date, series, catalogid, nominal, firstDimention, secondDimention, metal, circulation, obverse, reverse, link)" +
+		NpgsqlDataReader rd = await PostgreSQLSingle.sendSQL($"INSERT INTO public.\"" + tableName + "\"(id, name, date, series, catalogid, nominal, firstDimention, secondDimention, metal, circulation, obverse, reverse, link)" +
 		"VALUES(" +
-			$"'{ res.Id.ToString() }'," +
-			$"'{ res.Name }'," +
-			$"'{ res.Date.ToString() }'," +
-			$"'{ res.Series }'," +
-			$"'{ res.CatalogId }'," +
-			$"'{ res.Nominal.ToString() }'," +
-			$"'{ res.FirstDimension.ToString() }'," +
-			$"'{ res.SecondDimension.ToString() }'," +
-			$"'{ res.Metal }'," +
-			$"'{ res.Circulation.ToString() }'," +
-			$"'{ res.Obverse.Id.ToString() }'," +
-			$"'{ res.Reverse.Id.ToString() }'," +
-			$"'{ res.Link }'" +
+			$"'{ obj.Id.ToString() }'," +
+			$"'{ obj.Name }'," +
+			$"'{ obj.Date.ToString() }'," +
+			$"'{ obj.Series }'," +
+			$"'{ obj.CatalogId }'," +
+			$"'{ obj.Nominal.ToString() }'," +
+			$"'{ obj.FirstDimension.ToString() }'," +
+			$"'{ obj.SecondDimension.ToString() }'," +
+			$"'{ obj.Metal }'," +
+			$"'{ obj.Circulation.ToString() }'," +
+			$"'{ obj.Obverse.Id.ToString() }'," +
+			$"'{ obj.Reverse.Id.ToString() }'," +
+			$"'{ obj.Link }'" +
 			");");
-		rd.Dispose();
-		return res;
-
+		await rd.DisposeAsync();
+		return obj;
 	}
 
-	public static Coin getCoin(Guid id)
+
+	public static async Task<Coin> getCoin(Guid id)
 	{
-		NpgsqlDataReader rd = PostgreSQLSingle.sendSQL("SELECT * FROM public.\"" + tableName + "\" where id='" + id + "'");
+		NpgsqlDataReader rd = await PostgreSQLSingle.sendSQL("SELECT * FROM public.\"" + tableName + "\" where id='" + id + "'");
 		Coin res = null;
 		while (rd.Read())
 		{
@@ -53,14 +52,14 @@ public static class CoinRequest
 						   rd.GetString(rd.GetOrdinal("link"))
 						   );
 		}
-		rd.Dispose();
-		res.connectImages();
+		await rd.DisposeAsync();
+		await res.appendImages();
 		return res;
 	}
 
-	public static List<Coin> getCoins()
+	public static async Task<List<Coin>> getCoins()
 	{
-		NpgsqlDataReader rd = PostgreSQLSingle.sendSQL("SELECT * FROM public.\"" + tableName + "\"");
+		NpgsqlDataReader rd = await PostgreSQLSingle.sendSQL("SELECT * FROM public.\"" + tableName + "\"");
 		List<Coin> list = new List<Coin>();
 		while (rd.Read())
 		{
@@ -79,8 +78,8 @@ public static class CoinRequest
 						   rd.GetString(rd.GetOrdinal("link"))
 						   ));
 		}
-		rd.Dispose();
-		list.ForEach(x => x.connectImages());
+		await rd.DisposeAsync();
+		list.ForEach(x => x.appendImages());
 		return list;
 	}
 }

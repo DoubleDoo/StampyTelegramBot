@@ -47,7 +47,6 @@ public static class Request
     {
         HtmlDocument doc = web.Load(link, myProxyIP, myPort, userId, password);
         return doc;
-        //.DocumentNode.InnerHtml
     }
 }
 

@@ -3,22 +3,6 @@ using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using Npgsql;
 
-/*
-export const requests=[
-    {
-        posted: true,
-        searchPhrase: "",
-        year: 2022,
-        serie_id: 0,
-        nominal: -1,
-        metal_id: 0,
-        tab: 1,
-        page: 1,
-        sort: 99,
-        sort_direction: "down"
-    },
-]*/
-
 public static class Cbr
 {
 
@@ -49,7 +33,7 @@ public static class Cbr
 
     public static List<string> getPageLinks()
     {
-        HtmlDocument doc = Request.balansedRequest(Cbr.buildSearchRequest(true, "", 0, 0, -1, 0, 1, 1, 99, "down"));
+        HtmlDocument doc = Request.balansedRequest(Cbr.buildSearchRequest(true, "", 2022, 0, -1, 0, 1, 1, 99, "down"));
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'coins-tile_item')]/a");
         List<string> links = new List<string>();
         if (res != null)
@@ -65,11 +49,11 @@ public static class Cbr
         return links;
     }
 
-    public static Coin getObjDataFromLink(string link)
+    public static async Task<Coin> getObjDataFromLink(string link)
     {
         HtmlDocument doc = Request.balansedRequest(link);
         Console.WriteLine(link);
-        return CoinRequest.createCoin(
+        Coin cn= new Coin(
             getNameFromHtml(doc),
             getDateFromHtml(doc),
             getSeriesFromHtml(doc),
@@ -82,29 +66,30 @@ public static class Cbr
             getObverseFromHtml(doc),
             getReverseFromHtml(doc),
             link
-            );
+        );
+        return cn;
     }
 
-    public static List<Coin> getAllObjDataFromLink()
+    public static async Task<List<Coin>> getAllObjDataFromLink()
     {
         List<Coin> coins = new List<Coin>();
         foreach (string lnk in getPageLinks())
         {
             if (lnk != "https://www.cbr.ru/cash_circulation/memorable_coins/coins_base/ShowCoins/?cat_num=3213-0010")
             {
-                Coin c = getObjDataFromLink(lnk);
-                Console.WriteLine(c.ToString());
+                Coin c = await getObjDataFromLink(lnk);
                 coins.Add(c);
             }
         }
         return coins;
     }
 
-    public static List<Coin> getNewLinks()
+    public static async Task<List<Coin>> getNewLinks()
     {
         List<string> links = getPageLinks();
-        List<Coin> cns = CoinRequest.getCoins();
+        List<Coin> cns =  await CoinRequest.getCoins();
         List<Coin> coins = new List<Coin>();
+        if (coins!=null)
         foreach (Coin coin in cns)
         {
             int indx = links.IndexOf(coin.Link);
@@ -113,19 +98,35 @@ public static class Cbr
                 links.RemoveAt(indx);
             }
         }
+        int i = 0;
+        int count= links.Count;
         foreach (string lnk in links)
         {
             if (lnk != "https://www.cbr.ru/cash_circulation/memorable_coins/coins_base/ShowCoins/?cat_num=3213-0010")
             {
-                Coin c = getObjDataFromLink(lnk);
-                Console.WriteLine(c.ToString());
-                coins.Add(c);
+
+                Coin cn = await getObjDataFromLink(lnk);
+                //await cn.load();
+                //await cn.post(Telegram.getChannelDto(0));
+                Console.WriteLine(cn);
+                i++;
+                Console.WriteLine("_______"+i+"/"+ count + "_______");
+                coins.Add(cn);
             }
         }
+        foreach (Coin cn in coins)
+        {
+            Console.WriteLine("posted:"+cn.Name);
+            await cn.load();
+            await cn.post(Telegram.getChannelDto(0));
+            await Task.Delay(5000);
+            //Thread.Sleep(5000);
+        }
+
         return coins;
     }
    
-
+    //_____________________________________________________________________
     public static string getNameFromHtml(HtmlDocument doc)
     {
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//span[contains(@class, 'referenceable')]");
@@ -305,7 +306,6 @@ public static class Cbr
         HtmlNodeCollection res2 = doc.DocumentNode.SelectNodes(".//div[contains(@class, 'commemor-coin_images')]");
         if (res2 != null)
         {
-            //Console.WriteLine(linkBase + res2[0].SelectNodes(".//img")[0].GetAttributeValue("src", ""));
             return linkBase + res2[0].SelectNodes(".//img")[0].GetAttributeValue("src", "");
         }
         return "";
@@ -316,7 +316,6 @@ public static class Cbr
         HtmlNodeCollection res2 = doc.DocumentNode.SelectNodes(".//div[contains(@class, 'commemor-coin_images')]");
         if (res2 != null)
         {
-            //Console.WriteLine(linkBase + res2[0].SelectNodes(".//img")[1].GetAttributeValue("src", ""));
             return linkBase + res2[0].SelectNodes(".//img")[1].GetAttributeValue("src", "");
         }
         return "";

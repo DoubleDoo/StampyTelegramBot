@@ -3,30 +3,19 @@ using WTelegram;
 using TL;
 
 
-public struct channelDTO
+
+
+public static  class Telegram
 {
-    public string name;
-    public string description;
-    public string link;
-    public string image;
+    private static WTelegram.Client clnt;
+    public static TL.User usr;
+    public static channelDTO[] channelsDTO = new channelDTO[] { new ("CBR Coins", "Coins from cbr.ru","cbrcoins","cbr.jpg"), 
+                                                                new ("DNR Stamps", "Stamps from DNR", "dnrstamps", "dnr.jpg"), 
+                                                                new ("LNR Stamps", "Stamps from LNR", "lnrstamps", "lnr.jpg"), 
+                                                                new ("UA Stamps", "Stamps from UA", "uastamps", "ua.jpg") };
+    private static Dictionary<channelDTO, Channel> channels = new Dictionary<channelDTO, Channel>();
 
-    public channelDTO(string nm,string dsc,string lnk,string img) : this()
-    {
-        name = nm;
-        description = dsc;
-        link = lnk;
-        image = img;
-    }
-}
-
-public class Telegram
-{
-    static WTelegram.Client clnt;
-    static TL.User usr;
-    static channelDTO[] channelsDTO = new channelDTO[] { new ("CBR Coins", "Coins from cbr.ru","cbrcoins","cbr.jpg"), new ("DNR Stamps", "Stamps from DNR", "dnrstamps", "dnr.jpg"), new ("LNR Stamps", "Stamps from LNR", "lnrstamps", "lnr.jpg"), new ("UA Stamps", "Stamps from UA", "uastamps", "ua.jpg") };
-    static Dictionary<channelDTO, Channel> channels = new Dictionary<channelDTO, Channel>();
-
-    string Config(string what)
+    static string Config(string what)
     {
         switch (what)
         {
@@ -39,24 +28,24 @@ public class Telegram
         }
     }
 
-    public Telegram()
+    static Telegram()
     {
         clnt = new WTelegram.Client(Config);
     }
 
-    public channelDTO getChannelDto(int i)
+
+    public static channelDTO getChannelDto(int i)
     {
         return channelsDTO[i];
     }
 
-    public async Task process()
+    public static async Task process()
     {
-        await this.login();
-        await this.init();
-        //await this.test();
+        await login();
+        await init();
     }
 
-    public async Task init()
+    public static async Task init()
     {
         Console.WriteLine("Init");
         List <channelDTO> missedChanels = await checkChannelsExist(channelsDTO);
@@ -68,14 +57,14 @@ public class Telegram
         await checkChannelsExist(channelsDTO);
     }
 
-    public async Task login()
+    public static async Task login()
     {
         Console.WriteLine("Login");
         usr = await clnt.LoginUserIfNeeded();
         Console.WriteLine($"We are logged-in as {usr.username ?? usr.first_name + " " + usr.last_name} (id {usr.id})");
     }
 
-    public async Task<List<Channel>> getChannels()
+    public static async Task<List<Channel>> getChannels()
     {
         var chats = await clnt.Messages_GetAllDialogs();
         List<TL.Channel> channelsBuf = new List<TL.Channel>();
@@ -92,7 +81,7 @@ public class Telegram
         return channelsBuf;
     }
 
-    public async Task<TL.Channel> getChannel(channelDTO chnl)
+    public static async Task<TL.Channel> getChannel(channelDTO chnl)
     {
         var chats = await clnt.Messages_GetAllDialogs();
         List<TL.Channel> channelsBuf = new List<TL.Channel>();
@@ -112,11 +101,11 @@ public class Telegram
         return null;
     }
 
-    public async Task<List<channelDTO>> checkChannelsExist(channelDTO[] chnls)
+    public static async Task<List<channelDTO>> checkChannelsExist(channelDTO[] chnls)
     {
         List<channelDTO> missedChanels = new List<channelDTO>();
         channels.Clear();
-        List<TL.Channel> channelsBuf = await this.getChannels();
+        List<TL.Channel> channelsBuf = await getChannels();
 
         if (channelsBuf.Count==0)
         {
@@ -146,48 +135,44 @@ public class Telegram
         return missedChanels;
     }
 
-    public async Task createChannel(channelDTO chnl)
+    public static async Task createChannel(channelDTO chnl)
     {
         Console.WriteLine("Create:"+ chnl.name);
         await clnt.Channels_CreateChannel(chnl.name, chnl.description);
-        Channel ch = await this.getChannel(chnl);
+        Channel ch = await getChannel(chnl);
         await clnt.Channels_UpdateUsername(ch, chnl.link);
+        await Task.Delay(5000);
 
         Console.WriteLine(@"" + Environment.CurrentDirectory + "/channelsSettings/"+chnl.image);
         var fp = await clnt.UploadFileAsync(@""+Environment.CurrentDirectory + "/channelsSettings/"+ chnl.image, null);
         var photo = new InputChatUploadedPhoto() { file = fp };
         photo.flags = InputChatUploadedPhoto.Flags.has_file;
         await clnt.Channels_EditPhoto(ch, photo);
+        await Task.Delay(5000);
     }
 
 
-    public async Task createChannels(channelDTO[] chnls)
+    public static async Task createChannels(channelDTO[] chnls)
     {
         var chats = await clnt.Messages_GetAllDialogs();
         foreach (channelDTO ch in chnls)
         {
             if(!channels.ContainsKey(ch))
             {
+                await Task.Delay(5000);
                 await createChannel(ch);
             }
         }
     }
 
-    public async void sendmessage(channelDTO ch, string msg)
+    public static async Task sendmessage(channelDTO ch, string msg)
     {
-        var uploadedFile = await clnt.UploadFileAsync(@"" + Environment.CurrentDirectory + "/channelsSettings/" + ch.image, null);
-        var uploadedFile2 = await clnt.UploadFileAsync(@"" + Environment.CurrentDirectory + "/channelsSettings/test.jpg", null);
-
-        var inputMedias = new InputMedia[]
-        {
-            new InputMediaUploadedPhoto { file = uploadedFile },
-             new InputMediaUploadedPhoto { file = uploadedFile2},
-        };
-        await clnt.SendAlbumAsync((InputPeer)channels[ch], inputMedias, msg);
-        //await clnt.SendMessageAsync((InputPeer)channels[ch], msg, inputMedias[0]);
+        var entities = clnt.HtmlToEntities(ref msg);
+        await clnt.SendMessageAsync((InputPeer)channels[ch], msg, entities: entities);
+        Console.WriteLine("--Posted--");
     }
 
-    public async void sendmessage(channelDTO ch,string msg,Image[] imgs)
+    public static async Task sendmessage(channelDTO ch,string msg,Image[] imgs)
     {
         List<InputMedia> media=new List<InputMedia>();
         foreach(Image im in imgs)
@@ -195,16 +180,8 @@ public class Telegram
             var file=await clnt.UploadFileAsync(@"" + Environment.CurrentDirectory + "/data/img/" + im.Id + ".jpg", null);
             media.Add(new InputMediaUploadedPhoto { file = file });
         }
-       
-        await clnt.SendAlbumAsync((InputPeer)channels[ch], media.ToArray(), msg);
-    }
-
-    public async Task test()
-    {
-        Console.WriteLine("Test");
-        foreach (channelDTO ch in channelsDTO)
-        {
-            sendmessage(ch, "Test msg to " + ch.name);
-        }
+        var entities = clnt.HtmlToEntities(ref msg);
+        await clnt.SendAlbumAsync((InputPeer)channels[ch], media.ToArray(),msg,entities:entities);
+        Console.WriteLine("--Posted p--");
     }
 }

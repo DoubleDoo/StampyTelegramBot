@@ -19,7 +19,6 @@ public class Image
 	{
 		this.id = Guid.NewGuid();
 		this.link = link;
-		downloadImage(this.id);
 	}
 
 	public Image(Guid id,string link)
@@ -33,11 +32,22 @@ public class Image
 		using (WebClient client = new WebClient())
 		{
 			client.DownloadFile(this.link, Environment.CurrentDirectory+"/data/img/"  + id+".jpg");
-			Console.WriteLine(Environment.CurrentDirectory+ "/data/img/" + id + ".jpg");
 		}
 	}
 
-    public override string ToString()
+	public async Task post(channelDTO ch)
+	{
+		var text = $"<a href=\"{this.id}\">{this.Link}</a>\n";
+		await Telegram.sendmessage(ch, text, new Image[] { this });
+	}
+
+	public async Task<Image> load()
+	{
+		downloadImage(this.id);
+		return await ImageRequest.createImage(this);
+	}
+
+	public override string ToString()
     {
         return base.ToString()+"Image "+id.ToString()+":\n"+link+"\n";
     }
