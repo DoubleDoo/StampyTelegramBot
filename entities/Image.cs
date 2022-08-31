@@ -1,54 +1,33 @@
 ﻿using System;
 using System.Net;
 
-public class Image
+public class Image:Base
 {
-	private Guid id;
-	public Guid Id   
+	public Image(string link):base(link)
 	{
-		get { return id; }
+		downloadImage(this.Id);
 	}
 
-	private string link;
+	public Image(Guid id,string link) : base(id,link)
+	{
 
-	public string Link  
-	{
-		get { return link; }
 	}
-	public Image(string link)
+	public override async Task load()
 	{
-		this.id = Guid.NewGuid();
-		this.link = link;
-		downloadImage(this.id);
+		await ImageRequest.create(this);
 	}
 
-	public Image(Guid id,string link)
-	{
-		this.id = id;
-		this.link = link;
-	}
-
-	private void downloadImage(Guid id)
-    {
-		using (WebClient client = new WebClient())
-		{
-			client.DownloadFile(this.link, Environment.CurrentDirectory+"/data/img/"  + id+".jpg");
-		}
-	}
-
-	public async Task post(channelDTO ch)
-	{
-		var text = $"<a href=\"{this.id}\">{this.Link}</a>\n";
-		await Telegram.sendmessage(ch, text, new Image[] { this });
-	}
-
-	public async Task<Image> load()
-	{
-		return await ImageRequest.create(this);
-	}
 
 	public override string ToString()
     {
-        return base.ToString()+"Image "+id.ToString()+":\n"+link+"\n";
+        return "Image "+Id.ToString()+":\n"+Link+"\n";
     }
+
+	private void downloadImage(Guid id)
+	{
+		using (WebClient client = new WebClient())
+		{
+			client.DownloadFile(this.Link, Environment.CurrentDirectory + "/data/img/" + id + ".jpg");
+		}
+	}
 }

@@ -2,7 +2,7 @@
 using Npgsql;
 
 
-public class StampRequest
+public static class StampRequest
 {
 
 	private static string tableName = "Stamp";
@@ -10,7 +10,7 @@ public class StampRequest
 
 	public static async Task<Stamp> create(Stamp obj)
 	{
-		NpgsqlDataReader rd = await PostgreSQLSingle.sendSQL($"INSERT INTO public.\"" + tableName + "\"(id, name, date, catalogid, series, nominal, format, protection, circulation, perforation, paper, printmetod, design, country, obverse, link)" +
+		NpgsqlDataReader rd = await PostgreSQLSingle.sendSQL($"INSERT INTO public.\"" + tableName + "\"(id, name, date, catalogid, series, nominal, format, protection, circulation, perforation, material, printmetod, design, country, obverse, link)" +
 		"VALUES(" +
 			$"'{ obj.Id.ToString() }'," +
 			$"'{ obj.Name }'," +
@@ -22,7 +22,7 @@ public class StampRequest
 			$"'{ obj.Protection }'," +
 			$"'{ obj.Circulation.ToString() }'," +
 			$"'{ obj.Perforation }'," +
-			$"'{ obj.Paper }'," +
+			$"'{ obj.Material }'," +
 			$"'{ obj.PrintMetod }'," +
 			$"'{ obj.Design }'," +
 			$"'{ obj.Country }'," +
@@ -50,7 +50,7 @@ public class StampRequest
 						   rd.GetString(rd.GetOrdinal("protection")),
 						   rd.GetInt64(rd.GetOrdinal("circulation")),
 						   rd.GetString(rd.GetOrdinal("perforation")),
-						   rd.GetString(rd.GetOrdinal("paper")),
+						   rd.GetString(rd.GetOrdinal("material")),
 						   rd.GetString(rd.GetOrdinal("printMetod")),
 						   rd.GetString(rd.GetOrdinal("design")),
 						   rd.GetString(rd.GetOrdinal("country")),
@@ -79,7 +79,7 @@ public class StampRequest
 						   rd.GetString(rd.GetOrdinal("protection")),
 						   rd.GetInt64(rd.GetOrdinal("circulation")),
 						   rd.GetString(rd.GetOrdinal("perforation")),
-						   rd.GetString(rd.GetOrdinal("paper")),
+						   rd.GetString(rd.GetOrdinal("material")),
 						   rd.GetString(rd.GetOrdinal("printMetod")),
 						   rd.GetString(rd.GetOrdinal("design")),
 						   rd.GetString(rd.GetOrdinal("country")),

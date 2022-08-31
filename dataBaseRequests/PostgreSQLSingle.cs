@@ -16,10 +16,7 @@ public static class PostgreSQLSingle
 	private static string login = "bot";
 
 	private static string password = "7140043";
-	static PostgreSQLSingle()
-	{
-
-	}
+	static PostgreSQLSingle() {}
 
 	public static async Task connectToDb()
     {

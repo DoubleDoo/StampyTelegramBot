@@ -1,33 +1,7 @@
 ﻿using System;
 
-public class Coin: Collectable
+public class Coin: Collectable , IImageLoader
 {
-
-	private DateOnly date;
-
-	public DateOnly Date
-	{
-		get { return date; }
-	}
-
-	private string series;
-
-	public string Series
-	{
-		get { return series; }
-	}
-	private string catalogId;
-
-	public string CatalogId
-	{
-		get { return catalogId; }
-	}
-	private decimal nominal;
-
-	public decimal Nominal
-	{
-		get { return nominal; }
-	}
 	private double firstDimension;
 	public double FirstDimension
 	{
@@ -39,18 +13,7 @@ public class Coin: Collectable
 	{
 		get { return secondDimension; }
 	}
-	private string metal;
 
-	public string Metal
-	{
-		get { return metal; }
-	}
-	private long circulation;
-
-	public long Circulation
-	{
-		get { return circulation; }
-	}
 	private Image obverse;
 
 	public Image Obverse
@@ -69,46 +32,31 @@ public class Coin: Collectable
 	private Guid reverseGuid;
 
 
-	public Coin(string name, DateOnly date, string series, string catalogid, decimal nominal, double firstdimention, double seconddimention, string metal, long circulation, string obverseLink, string reverseLink, string link) : base(name, link)
+	public Coin(string name, DateOnly date, string series, string catalogid, decimal nominal, double firstdimention, double seconddimention, string material, long circulation, string obverseLink, string reverseLink, string link) : base(name,date,series,catalogid,nominal, circulation, material, link)
 	{
-		this.date = date;
-		this.series = series;
-		this.catalogId = catalogid;
-		this.nominal = nominal;
 		this.firstDimension = firstdimention;
 		this.secondDimension = seconddimention;
-		this.metal = metal;
-		this.circulation = circulation;
 		this.reverse = new Image(reverseLink);
 		this.obverse = new Image(obverseLink);
 	}
 
-	public Coin(Guid id, string name, DateOnly date, string series, string catalogid, decimal nominal, double firstdimention, double seconddimention, string metal, long circulation, Guid obverse, Guid reverse, string link): base(id,name,link)
+	public Coin(Guid id, string name, DateOnly date, string series, string catalogid, decimal nominal, double firstdimention, double seconddimention, string material, long circulation, Guid obverse, Guid reverse, string link): base(id,name, date, series, catalogid,nominal,circulation, material, link)
 	{
-		this.date = date;
-		this.series = series;
-		this.catalogId = catalogid;
-		this.nominal = nominal;
 		this.firstDimension = firstdimention;
 		this.secondDimension = seconddimention;
-		this.metal = metal;
-		this.circulation = circulation;
 		this.reverseGuid = reverse;
 		this.obverseGuid = obverse;
 	}
-
-
-	public async Task appendImages()
+	public  async Task appendImages()
 	{
 		this.reverse = await loadImages(this.reverseGuid);
 		this.obverse = await loadImages(this.obverseGuid);
 	}
 
-	private async Task<Image> loadImages(Guid id)
+	public  async Task<Image> loadImages(Guid id)
 	{
 		return await ImageRequest.get(id);
 	}
-
 
 	public override async Task post(channelDTO ch)
 	{
@@ -116,7 +64,7 @@ public class Coin: Collectable
 				   $"<b>Каталожный номер : </b> {this.CatalogId}\n" +
 				   $"<b>Дата выпуска : </b> {this.Date}\n\n" +
 				   $"<b>Номинал : </b> {this.Nominal} руб.\n" +
-				   $"<b>Материал : </b> {this.Metal}\n" +
+				   $"<b>Материал : </b> {this.Material}\n" +
 				   $"<b>Тираж : </b> {this.Circulation}\n";
 		await Telegram.sendmessage(ch, text, new Image[] { this.Obverse, this.Reverse });
 	}
@@ -138,7 +86,7 @@ public class Coin: Collectable
 			"\nNominal:" + this.Nominal +
 			"\nDiameter:" + this.FirstDimension +
 			"\nDiameter2:" + this.SecondDimension +
-			"\nMetal:" + this.Metal +
+			"\nMetal:" + this.Material +
 			"\nCirculation:" + this.Circulation +
 			"\nLink:" + this.Link +
 			"\n";

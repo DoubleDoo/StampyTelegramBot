@@ -1,36 +1,8 @@
 ﻿using System;
 
-public class Stamp : Collectable
+public class Stamp : Collectable, IImageLoader
 {
-	private DateOnly date;
-	public DateOnly Date
-	{
-		get { return date; }
-	}
-	private string catalogId;
-	public string CatalogId
-	{
-		get { return catalogId; }
-	}
-
-	private long circulation;
-	public long Circulation
-	{
-		get { return circulation; }
-	}
-
-	private decimal nominal;
-	public decimal Nominal
-	{
-		get { return nominal; }
-	}
-
-	private string series;
-	public string Series
-	{
-		get { return series; }
-	}
-
+	
 	private string format;
 	public string Format
 	{
@@ -47,12 +19,6 @@ public class Stamp : Collectable
 	public string Perforation
 	{
 		get { return perforation; }
-	}
-
-	private string paper;
-	public string Paper
-	{
-		get { return paper; }
 	}
 
 	private string printMetod;
@@ -82,34 +48,22 @@ public class Stamp : Collectable
 	private Guid obverseGuid;
 
 
-	public Stamp(string name, DateOnly date, string catalogId, string series,decimal nominal,string format,string protection,long	circulation,string perforation,string paper,string printMetod,string design,string country, string obverse, string link) : base(name, link)
+	public Stamp(string name, DateOnly date, string catalogId, string series,decimal nominal,string format,string protection,long circulation,string perforation,string material, string printMetod,string design,string country, string obverse, string link) : base(name, date, series, catalogId, nominal, circulation, material, link)
 	{
-		this.catalogId = catalogId;
-		this.date=date;
-		this.series=series;
-		this.nominal=nominal;
 		this.format=format;
 		this.protection=protection;
-		this.circulation = circulation;
 		this.perforation = perforation;
-		this.paper=paper;
 		this.printMetod=printMetod;
 		this.design=design;
 		this.country=country;
 		this.obverse = new Image(obverse);
 	}
 
-	public Stamp(Guid id, string name, DateOnly date, string catalogId, string series, decimal nominal, string format, string protection, long circulation, string perforation, string paper, string printMetod, string design, string country, Guid obverse, string link) : base(id, name, link)
+	public Stamp(Guid id, string name, DateOnly date, string catalogId, string series, decimal nominal, string format, string protection, long circulation, string perforation, string material, string printMetod, string design, string country, Guid obverse, string link) : base(id, name, date, series, catalogId, nominal, circulation, material, link)
 	{
-		this.catalogId = catalogId;
-		this.date = date;
-		this.series = series;
-		this.nominal = nominal;
 		this.format = format;
 		this.protection = protection;
-		this.circulation = circulation;
 		this.perforation = perforation;
-		this.paper = paper;
 		this.printMetod = printMetod;
 		this.design = design;
 		this.country = country;
@@ -122,7 +76,7 @@ public class Stamp : Collectable
 		this.obverse = await loadImages(this.obverseGuid);
 	}
 
-	private async Task<Image> loadImages(Guid id)
+	public async Task<Image> loadImages(Guid id)
 	{
 		return await ImageRequest.get(id);
 	}

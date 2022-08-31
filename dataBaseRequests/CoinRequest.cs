@@ -10,7 +10,7 @@ public static class CoinRequest
 
 	public static async Task<Coin> create(Coin obj)
 	{
-		NpgsqlDataReader rd = await PostgreSQLSingle.sendSQL($"INSERT INTO public.\"" + tableName + "\"(id, name, date, series, catalogid, nominal, firstDimention, secondDimention, metal, circulation, obverse, reverse, link)" +
+		NpgsqlDataReader rd = await PostgreSQLSingle.sendSQL($"INSERT INTO public.\"" + tableName + "\"(id, name, date, series, catalogid, nominal, firstDimention, secondDimention, material, circulation, obverse, reverse, link)" +
 		"VALUES(" +
 			$"'{ obj.Id.ToString() }'," +
 			$"'{ obj.Name }'," +
@@ -20,7 +20,7 @@ public static class CoinRequest
 			$"'{ obj.Nominal.ToString() }'," +
 			$"'{ obj.FirstDimension.ToString() }'," +
 			$"'{ obj.SecondDimension.ToString() }'," +
-			$"'{ obj.Metal }'," +
+			$"'{ obj.Material }'," +
 			$"'{ obj.Circulation.ToString() }'," +
 			$"'{ obj.Obverse.Id.ToString() }'," +
 			$"'{ obj.Reverse.Id.ToString() }'," +
@@ -45,7 +45,7 @@ public static class CoinRequest
 					 	   rd.GetDecimal(rd.GetOrdinal("nominal")),
 						   rd.GetDouble(rd.GetOrdinal("firstDimention")),
 						   rd.GetDouble(rd.GetOrdinal("secondDimention")),
-						   rd.GetString(rd.GetOrdinal("metal")),
+						   rd.GetString(rd.GetOrdinal("material")),
 						   rd.GetInt64(rd.GetOrdinal("circulation")),
 						   rd.GetGuid(rd.GetOrdinal("obverse")),
 						   rd.GetGuid(rd.GetOrdinal("reverse")),
@@ -71,7 +71,7 @@ public static class CoinRequest
 						   rd.GetDecimal(rd.GetOrdinal("nominal")),
 							rd.GetDouble(rd.GetOrdinal("firstDimention")),
 						   rd.GetDouble(rd.GetOrdinal("secondDimention")),
-						   rd.GetString(rd.GetOrdinal("metal")),
+						   rd.GetString(rd.GetOrdinal("material")),
 						   rd.GetInt64(rd.GetOrdinal("circulation")),
 						   rd.GetGuid(rd.GetOrdinal("obverse")),
 						   rd.GetGuid(rd.GetOrdinal("reverse")),
