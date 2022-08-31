@@ -37,7 +37,8 @@ ALTER TABLE IF EXISTS public."Image"
     id uuid NOT NULL,
     name text,
     date date,
-    set text,
+    catalogId text,
+    series text,
     nominal money,
     format text,
     protection text,
@@ -46,7 +47,7 @@ ALTER TABLE IF EXISTS public."Image"
     paper text,
     printMetod text,
     design text,
-    country uuid,
+    country text,
     obverse uuid,
     link text,
     PRIMARY KEY (id)

@@ -76,11 +76,6 @@ public static class Timer
     }
 
 
-    public static async Task<Stamp> getstamp()
-    {
-        return new Stamp("abc", "swd");
-    }
-
     public static async Task getTest()
     {
         Queue<string> a = new Queue<string>(await Cbr.getFreshPageLinks());
@@ -98,7 +93,7 @@ public static class Timer
                 i++;
                 tsk.Add(Cbr.getObjDataFromLink(a.Dequeue()));
             }
-            tsk.Add(getstamp());
+            //tsk.Add(getstamp());
 
             Console.WriteLine(i + ":" + total);
             await Task.WhenAll(tsk.ToArray());

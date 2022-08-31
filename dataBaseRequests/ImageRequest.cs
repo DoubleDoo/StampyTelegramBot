@@ -8,7 +8,7 @@ public static class ImageRequest
 	private static string tableName = "Image";
 	static ImageRequest() {}
 
-	public static async Task<Image> createImage(Image obj)
+	public static async Task<Image> create(Image obj)
 	{
 		NpgsqlDataReader rd = await PostgreSQLSingle.sendSQL("INSERT INTO public.\"" + tableName + "\"(id, link)" +
 		"VALUES(" +
@@ -19,7 +19,7 @@ public static class ImageRequest
 		return obj;
 	}
 
-	public static async Task<Image> getImage(Guid id)
+	public static async Task<Image> get(Guid id)
 	{
 		NpgsqlDataReader rd = await PostgreSQLSingle.sendSQL("SELECT * FROM public.\"" + tableName + "\" where id='"+id+"'");
 		Image res=null;
@@ -31,7 +31,7 @@ public static class ImageRequest
 		return res;
 	}
 
-	public static async Task<List<Image>> getImages()
+	public static async Task<List<Image>> get()
 	{
 		NpgsqlDataReader rd = await PostgreSQLSingle.sendSQL("SELECT * FROM public.\"" + tableName + "\"");
 		List<Image> list = new List<Image>();

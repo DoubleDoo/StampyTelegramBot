@@ -1,51 +1,94 @@
 ﻿using System;
+using Npgsql;
 
 
 public class StampRequest
 {
-	public StampRequest()
+
+	private static string tableName = "Stamp";
+	static StampRequest() { }
+
+	public static async Task<Stamp> create(Stamp obj)
 	{
+		NpgsqlDataReader rd = await PostgreSQLSingle.sendSQL($"INSERT INTO public.\"" + tableName + "\"(id, name, date, catalogid, series, nominal, format, protection, circulation, perforation, paper, printmetod, design, country, obverse, link)" +
+		"VALUES(" +
+			$"'{ obj.Id.ToString() }'," +
+			$"'{ obj.Name }'," +
+			$"'{ obj.Date.ToString() }'," +
+			$"'{ obj.CatalogId }'," +
+			$"'{ obj.Series }'," +
+			$"'{ obj.Nominal.ToString() }'," +
+			$"'{ obj.Format }'," +
+			$"'{ obj.Protection }'," +
+			$"'{ obj.Circulation.ToString() }'," +
+			$"'{ obj.Perforation }'," +
+			$"'{ obj.Paper }'," +
+			$"'{ obj.PrintMetod }'," +
+			$"'{ obj.Design }'," +
+			$"'{ obj.Country }'," +
+			$"'{ obj.Obverse.Id.ToString() }'," +
+			$"'{ obj.Link }'" +
+			");");
+		await rd.DisposeAsync();
+		return obj;
+	}
+
+
+	public static async Task<Stamp> get(Guid id)
+	{
+		NpgsqlDataReader rd = await PostgreSQLSingle.sendSQL("SELECT * FROM public.\"" + tableName + "\" where id='" + id + "'");
+		Stamp res = null;
+		while (rd.Read())
+		{
+			res = new Stamp(rd.GetGuid(rd.GetOrdinal("id")),
+						   rd.GetString(rd.GetOrdinal("name")),
+						   (DateOnly)rd.GetDate(rd.GetOrdinal("date")),
+						   rd.GetString(rd.GetOrdinal("catalogid")),
+						   rd.GetString(rd.GetOrdinal("series")),
+						   rd.GetDecimal(rd.GetOrdinal("nominal")),
+						   rd.GetString(rd.GetOrdinal("format")),
+						   rd.GetString(rd.GetOrdinal("protection")),
+						   rd.GetInt64(rd.GetOrdinal("circulation")),
+						   rd.GetString(rd.GetOrdinal("perforation")),
+						   rd.GetString(rd.GetOrdinal("paper")),
+						   rd.GetString(rd.GetOrdinal("printMetod")),
+						   rd.GetString(rd.GetOrdinal("design")),
+						   rd.GetString(rd.GetOrdinal("country")),
+						   rd.GetGuid(rd.GetOrdinal("obverse")),
+						   rd.GetString(rd.GetOrdinal("link"))
+						   );
+		}
+		await rd.DisposeAsync();
+		await res.appendImages();
+		return res;
+	}
+
+	public static async Task<List<Stamp>> get()
+	{
+		NpgsqlDataReader rd = await PostgreSQLSingle.sendSQL("SELECT * FROM public.\"" + tableName + "\"");
+		List<Stamp> list = new List<Stamp>();
+		while (rd.Read())
+		{
+			list.Add(new Stamp(rd.GetGuid(rd.GetOrdinal("id")),
+						   rd.GetString(rd.GetOrdinal("name")),
+						   (DateOnly)rd.GetDate(rd.GetOrdinal("date")),
+						   rd.GetString(rd.GetOrdinal("catalogid")),
+						   rd.GetString(rd.GetOrdinal("series")),
+						   rd.GetDecimal(rd.GetOrdinal("nominal")),
+						   rd.GetString(rd.GetOrdinal("format")),
+						   rd.GetString(rd.GetOrdinal("protection")),
+						   rd.GetInt64(rd.GetOrdinal("circulation")),
+						   rd.GetString(rd.GetOrdinal("perforation")),
+						   rd.GetString(rd.GetOrdinal("paper")),
+						   rd.GetString(rd.GetOrdinal("printMetod")),
+						   rd.GetString(rd.GetOrdinal("design")),
+						   rd.GetString(rd.GetOrdinal("country")),
+						   rd.GetGuid(rd.GetOrdinal("obverse")),
+						   rd.GetString(rd.GetOrdinal("link"))
+						   ));
+		}
+		await rd.DisposeAsync();
+		list.ForEach(x => x.appendImages());
+		return list;
 	}
 }
-/*
-Guid myuuid = Guid.NewGuid();
-string myuuidAsString = myuuid.ToString();
-string name = "1";
-string date = "1999.06.16";
-string series = "3";
-string catalogId = "4";
-string nominal = "5";
-string diameter = "6";
-string metal = "7";
-string circulation = "8";
-string obverse = myuuidAsString;
-string reverse = myuuidAsString;
-string link = "9";
-*/
-/*
-Console.WriteLine("First one:!");
-
-PostgreSQLSingle.sendSQL($"INSERT INTO public.\"Coin\"(id, name, date, series, catalogid, nominal, diameter, metal, circulation, obverse, reverse, link)" +
-        $"VALUES(" +
-            $"{ myuuidAsString }," +
-            $"{ name }," +
-            $"{ date }," +
-            $"{ series }," +
-            $"{ catalogId }," +
-            $"{ nominal }," +
-            $"{ diameter }," +
-            $"{ metal }," +
-            $"{ circulation }," +
-            $"{ obverse }," +
-            $"{ reverse }," +
-            $"{ link }" +
-            "););");
-*/
-/*
-Console.WriteLine("TEST:");
-Console.WriteLine("INSERT INTO public.\"" + "Image" + "\"(id, link)" +
-        "VALUES(" +
-            $"\"{ myuuidAsString }\"," +
-            $"\"{ "qwerty" }\"" +
-            "););");
-*/

@@ -106,7 +106,7 @@ public class Coin: Collectable
 
 	private async Task<Image> loadImages(Guid id)
 	{
-		return await ImageRequest.getImage(id);
+		return await ImageRequest.get(id);
 	}
 
 
@@ -125,7 +125,7 @@ public class Coin: Collectable
 	{
 		await this.reverse.load();
 		await this.obverse.load();
-		return (Collectable) await CoinRequest.createCoin(this);
+		return (Collectable) await CoinRequest.create(this);
 	}
 
 	public override string ToString()

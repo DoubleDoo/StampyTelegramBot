@@ -52,7 +52,7 @@ public static class Cbr
     public static async Task<List<string>> getFreshPageLinks()
     {
         Task<List<string>> links =  getPageLinks();
-        Task<List<Coin>> cns =  CoinRequest.getCoins();
+        Task<List<Coin>> cns =  CoinRequest.get();
         await Task.WhenAll(new Task[]{links,cns});
         List<string> ln = links.Result;
         List<Coin> cn = cns.Result;

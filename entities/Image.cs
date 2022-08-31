@@ -44,7 +44,7 @@ public class Image
 
 	public async Task<Image> load()
 	{
-		return await ImageRequest.createImage(this);
+		return await ImageRequest.create(this);
 	}
 
 	public override string ToString()

@@ -8,7 +8,7 @@ public static class CoinRequest
 	private static string tableName = "Coin";
 	static CoinRequest() { }
 
-	public static async Task<Coin> createCoin(Coin obj)
+	public static async Task<Coin> create(Coin obj)
 	{
 		NpgsqlDataReader rd = await PostgreSQLSingle.sendSQL($"INSERT INTO public.\"" + tableName + "\"(id, name, date, series, catalogid, nominal, firstDimention, secondDimention, metal, circulation, obverse, reverse, link)" +
 		"VALUES(" +
@@ -31,7 +31,7 @@ public static class CoinRequest
 	}
 
 
-	public static async Task<Coin> getCoin(Guid id)
+	public static async Task<Coin> get(Guid id)
 	{
 		NpgsqlDataReader rd = await PostgreSQLSingle.sendSQL("SELECT * FROM public.\"" + tableName + "\" where id='" + id + "'");
 		Coin res = null;
@@ -57,7 +57,7 @@ public static class CoinRequest
 		return res;
 	}
 
-	public static async Task<List<Coin>> getCoins()
+	public static async Task<List<Coin>> get()
 	{
 		NpgsqlDataReader rd = await PostgreSQLSingle.sendSQL("SELECT * FROM public.\"" + tableName + "\"");
 		List<Coin> list = new List<Coin>();

@@ -141,14 +141,14 @@ public static  class Telegram
         await clnt.Channels_CreateChannel(chnl.name, chnl.description);
         Channel ch = await getChannel(chnl);
         await clnt.Channels_UpdateUsername(ch, chnl.link);
-        await Task.Delay(5000);
+        await Task.Delay(10000);
 
         Console.WriteLine(@"" + Environment.CurrentDirectory + "/channelsSettings/"+chnl.image);
         var fp = await clnt.UploadFileAsync(@""+Environment.CurrentDirectory + "/channelsSettings/"+ chnl.image, null);
         var photo = new InputChatUploadedPhoto() { file = fp };
         photo.flags = InputChatUploadedPhoto.Flags.has_file;
         await clnt.Channels_EditPhoto(ch, photo);
-        await Task.Delay(5000);
+        await Task.Delay(10000);
     }
 
 
@@ -159,7 +159,7 @@ public static  class Telegram
         {
             if(!channels.ContainsKey(ch))
             {
-                await Task.Delay(5000);
+                await Task.Delay(10000);
                 await createChannel(ch);
             }
         }
