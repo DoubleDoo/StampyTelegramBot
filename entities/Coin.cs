@@ -1,20 +1,8 @@
 ﻿using System;
 
-public class Coin
+public class Coin: Collectable
 {
-	private Guid id;
-	public Guid Id
-	{
-		get { return id; }
-	}
 
-	private string name;
-
-	public string Name
-	{
-		get { return name; }
-	}
-	
 	private DateOnly date;
 
 	public DateOnly Date
@@ -81,17 +69,8 @@ public class Coin
 	private Guid reverseGuid;
 
 
-	private string link;
-
-	public string Link
+	public Coin(string name, DateOnly date, string series, string catalogid, decimal nominal, double firstdimention, double seconddimention, string metal, long circulation, string obverseLink, string reverseLink, string link) : base(name, link)
 	{
-		get { return link; }
-	}
-
-	public Coin(string name, DateOnly date, string series, string catalogid, decimal nominal, double firstdimention, double seconddimention, string metal, long circulation, string obverseLink, string reverseLink, string link)
-	{
-		this.id = Guid.NewGuid();
-		this.name = name;
 		this.date = date;
 		this.series = series;
 		this.catalogId = catalogid;
@@ -102,13 +81,10 @@ public class Coin
 		this.circulation = circulation;
 		this.reverse = new Image(reverseLink);
 		this.obverse = new Image(obverseLink);
-		this.link = link;
 	}
 
-	public Coin(Guid id, string name, DateOnly date, string series, string catalogid, decimal nominal, double firstdimention, double seconddimention, string metal, long circulation, Guid obverse, Guid reverse, string link)
+	public Coin(Guid id, string name, DateOnly date, string series, string catalogid, decimal nominal, double firstdimention, double seconddimention, string metal, long circulation, Guid obverse, Guid reverse, string link): base(id,name,link)
 	{
-		this.id = id;
-		this.name = name;
 		this.date = date;
 		this.series = series;
 		this.catalogId = catalogid;
@@ -119,7 +95,6 @@ public class Coin
 		this.circulation = circulation;
 		this.reverseGuid = reverse;
 		this.obverseGuid = obverse;
-		this.link = link;
 	}
 
 
@@ -135,7 +110,7 @@ public class Coin
 	}
 
 
-	public async Task post(channelDTO ch)
+	public override async Task post(channelDTO ch)
 	{
 		var text = $"<a href=\"{this.Link}\">{this.Name}</a>\n\n" +
 				   $"<b>Каталожный номер : </b> {this.CatalogId}\n" +
@@ -146,26 +121,26 @@ public class Coin
 		await Telegram.sendmessage(ch, text, new Image[] { this.Obverse, this.Reverse });
 	}
 
-	public async Task<Coin> load()
+	public override async Task<Collectable> load()
 	{
 		await this.reverse.load();
 		await this.obverse.load();
-		return await CoinRequest.createCoin(this);
+		return (Collectable) await CoinRequest.createCoin(this);
 	}
 
 	public override string ToString()
 	{
-		return "Coin: " + this.id +
-			"\nName:" + this.name +
-			"\nDate:" + this.date +
-			"\nSeries:" + this.series +
-			"\nCatalogId:" + this.catalogId +
-			"\nNominal:" + this.nominal +
-			"\nDiameter:" + this.firstDimension +
-			"\nDiameter2:" + this.secondDimension +
-			"\nMetal:" + this.metal +
-			"\nCirculation:" + this.circulation +
-			"\nLink:" + this.link +
+		return "Coin: " + this.Id +
+			"\nName:" + this.Name +
+			"\nDate:" + this.Date +
+			"\nSeries:" + this.Series +
+			"\nCatalogId:" + this.CatalogId +
+			"\nNominal:" + this.Nominal +
+			"\nDiameter:" + this.FirstDimension +
+			"\nDiameter2:" + this.SecondDimension +
+			"\nMetal:" + this.Metal +
+			"\nCirculation:" + this.Circulation +
+			"\nLink:" + this.Link +
 			"\n";
 	}
 }

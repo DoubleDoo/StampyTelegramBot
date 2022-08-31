@@ -19,6 +19,7 @@ public class Image
 	{
 		this.id = Guid.NewGuid();
 		this.link = link;
+		downloadImage(this.id);
 	}
 
 	public Image(Guid id,string link)
@@ -43,7 +44,6 @@ public class Image
 
 	public async Task<Image> load()
 	{
-		downloadImage(this.id);
 		return await ImageRequest.createImage(this);
 	}
 
