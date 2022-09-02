@@ -8,13 +8,14 @@ public static class Cbr
 
     public static string linkBase = "https://www.cbr.ru";
     public static string catalog = linkBase + "/cash_circulation/memorable_coins/coins_base/";
+    public static TelegramChannel channel = new TelegramChannel("CBR Coins", "Coins from cbr.ru", "cbrcoins", "cbr.jpg");
 
     static Cbr()
     {
 
     }
 
-    public static string buildSearchRequest(bool posted, string searchPhrase, int year, int serie_id, int nominal, int metal_id, int tab, int page, int sort, string sort_direction)
+    public static string BuildRequest(bool posted, string searchPhrase, int year, int serie_id, int nominal, int metal_id, int tab, int page, int sort, string sort_direction)
     {
         string req = catalog +
         $"?UniDbQuery.Posted={posted}" +
@@ -31,9 +32,9 @@ public static class Cbr
     }
 
 
-    public static async Task<List<string>> getPageLinks()
+    public static async Task<List<string>> ScrapPage()
     {
-        HtmlDocument doc = Request.balansedRequest(Cbr.buildSearchRequest(true, "", 2022, 0, -1, 0, 1, 1, 99, "down"));
+        HtmlDocument doc = Request.BalansedRequest(Cbr.BuildRequest(true, "", 2022, 0, -1, 0, 1, 1, 99, "down"));
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'coins-tile_item')]/a");
         List<string> links = new List<string>();
         if (res != null)
@@ -49,11 +50,11 @@ public static class Cbr
         return links;
     }
 
-    public static async Task<List<string>> getFreshPageLinks()
+    public static async Task<List<string>> ScrapPageNew()
     {
-        Task<List<string>> links =  getPageLinks();
-        Task<List<Coin>> cns =  CoinRequest.get();
-        await Task.WhenAll(new Task[]{links,cns});
+        Task<List<string>> links = ScrapPage();
+        Task<List<Coin>> cns = CoinRequest.Get();
+        await Task.WhenAll(new Task[] { links, cns });
         List<string> ln = links.Result;
         List<Coin> cn = cns.Result;
 
@@ -74,22 +75,21 @@ public static class Cbr
         return ln;
     }
 
-    public static async Task<Coin> getObjDataFromLink(string link)
+    public static async Task<Coin> Create(string link)
     {
-        HtmlDocument doc = Request.balansedRequest(link);
-        Coin cn= new Coin(
-            CbrParser.getNameFromHtml(doc),
-            CbrParser.getDateFromHtml(doc),
-            CbrParser.getSeriesFromHtml(doc),
-            CbrParser.getCatalogIdFromHtml(doc),
-            CbrParser.getNominalIdFromHtml(doc),
-            CbrParser.getFirstDimentionFromHtml(doc),
-            CbrParser.getSecondDimentionFromHtml(doc),
-            CbrParser.getMetalFromHtml(doc),
-            CbrParser.getCirculationFromHtml(doc),
-            CbrParser.getObverseFromHtml(doc),
-            CbrParser.getReverseFromHtml(doc),
-            link
+        HtmlDocument doc = Request.BalansedRequest(link);
+        Coin cn = new Coin(link,
+                          CbrParser.GetCatalogIdFromHtml(doc),
+                          CbrParser.GetNameFromHtml(doc),
+                          CbrParser.GetSeriesFromHtml(doc),
+                          CbrParser.GetMetalFromHtml(doc),
+                          CbrParser.GetNominalIdFromHtml(doc),
+                          CbrParser.GetCirculationFromHtml(doc),
+                          CbrParser.GetDateFromHtml(doc),
+                          CbrParser.GetFirstDimentionFromHtml(doc),
+                          CbrParser.GetSecondDimentionFromHtml(doc),
+                          CbrParser.GetObverseFromHtml(doc),
+                          CbrParser.GetReverseFromHtml(doc)
         );
         return cn;
     }

@@ -1,23 +1,71 @@
-﻿using System;
-
+﻿///<summary>
+///Базовый абстрактный класс предоставляющий базовый функционал для сущностей базы данных
+///</summary>
 public abstract class Base
 {
-	public Guid Id { get; }
-	public string Link { get; }
+    ///<summary>
+    ///Поле для хранения GUID
+    ///</summary>
+    ///<value>
+    ///GUID объекта
+    ///</value>
+    public Guid Id { get; set; }
 
-	public Base(string lnk)
-	{
-		Id = Guid.NewGuid();
-		Link = lnk;
-	}
+    ///<summary>
+    ///Поле для хранения ссылки
+    ///</summary>
+    ///<value>
+    ///Ссылка на объект в сети
+    ///</value>
+    public string Link { get; set; }
 
-	public Base(Guid i, string lnk)
-	{
-		Id = i;
-		Link = lnk;
-	}
+    ///<summary>
+    ///Конструктор для создания нового объекта класса
+    ///</summary>
+    ///<returns>
+    ///Объект класса
+    ///</returns>
+    ///<param name="link">
+    ///Ссылка на источник данных
+    ///</param>
+    public Base(string link)
+    {
+        Id = Guid.NewGuid();
+        Link = link;
+    }
 
-	public abstract Task load();
-	public abstract string ToString();
+    ///<summary>
+    ///Конструктор для создания нового объекта класса из данных базы данных
+    ///</summary>
+    ///<returns>
+    ///Объект класса
+    ///</returns>
+    ///<param name="link">
+    ///Ссылка на источник данных
+    ///</param>
+    ///<param name="id">
+    ///GUID объекта
+    ///</param>
+    public Base(Guid id, string link)
+    {
+        Id = id;
+        Link = link;
+    }
+
+    ///<summary>
+    ///Асинхронная функция выгрузки объекта в базу данных 
+    ///</summary>
+    ///<returns>
+    ///Асинхронная задача
+    ///</returns>
+    public abstract Task Load();
+
+    ///<summary>
+    ///Преобразование объекта в строковое представление
+    ///</summary>
+    ///<returns>
+    ///Строковое представление объекта
+    ///</returns>
+    public abstract string ToString();
 }
 

@@ -21,7 +21,7 @@ services:
     image: ${DOCKER_REGISTRY-}stampytelegrambot
     volumes:
       - data:/app/data
-      - ./channelsSettings:/app/channelsSettings
+      - ./images:/app/images
     build:
       context: .
       dockerfile: Dockerfile

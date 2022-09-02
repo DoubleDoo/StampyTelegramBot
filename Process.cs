@@ -2,28 +2,39 @@
 using Npgsql;
 using System.Timers;
 
-public static class Timer
+public static class Process
 {
     static System.Timers.Timer processTimer;
     static System.Timers.Timer initTimer;
     static bool inWork=false;
 
-    static Timer()
+    static Process(){}
+
+    public static async Task Init()
     {
- 
+        Console.WriteLine("Initialization...");
+        await Telegram.Login();
+        await PostgreSQLSingle.ConnectToDb();
+        await Cbr.channel.Update();
+        await UpdateImageCatalog();
+        Console.WriteLine("Initialization finished");
     }
 
-    public static async void Process()
+    public static async Task Start()
     {
-        Console.WriteLine("Init");
-        StartWaitTimer();
-    }
-
-
-    public static void StartWaitTimer()
-    {
+        Console.WriteLine("Start...");
+        Console.WriteLine("Waiting database initialization...");
         SetWaitTimer();
-        Console.ReadLine();
+    }
+
+    private static async Task UpdateImageCatalog()
+    {
+        var di = new DirectoryInfo(Environment.CurrentDirectory + @"/data/img");
+        if (!di.Exists)
+        {
+            di.Create();
+            Console.WriteLine(Environment.CurrentDirectory + @"/data/img" + " Created");
+        }
     }
 
     public static void StartPeriodTimer()
@@ -54,31 +65,25 @@ public static class Timer
         if (!inWork)
         {
             inWork = true;
+            Console.WriteLine("Refreshing...");
             await getTest();
-            Console.WriteLine("Tick");
+            Console.WriteLine("Done");
             inWork = false;
         }
     }
 
     private static void WaitFinishedEvent(Object source, ElapsedEventArgs e)
     {
-        var di = new DirectoryInfo(Environment.CurrentDirectory + @"/data/img");
-        Console.WriteLine(Environment.CurrentDirectory + @"/data/img");
-        if (!di.Exists)
-        {
-            Console.WriteLine("Created");
-            di.Create();
-        }
         initTimer.Stop();
         initTimer.Dispose();
-        Console.WriteLine("Finished");
+        Console.WriteLine("Done");
         StartPeriodTimer();
     }
 
 
     public static async Task getTest()
     {
-        Queue<string> a = new Queue<string>(await Cbr.getFreshPageLinks());
+        Queue<string> a = new Queue<string>(await Cbr.ScrapPageNew());
 
         List<Coin> cl = new List<Coin>();
         List<Stamp> st = new List<Stamp>();
@@ -91,21 +96,26 @@ public static class Timer
             if (a.Count > 0)
             {
                 i++;
-                tsk.Add(Cbr.getObjDataFromLink(a.Dequeue()));
+                tsk.Add(Cbr.Create(a.Dequeue()));
             }
-            //tsk.Add(getstamp());
+            /*
+            if (a.Count > 0)
+            {
+                i++;
+                tsk.Add(Cbr.Create(a.Dequeue()));
+            }*/
 
             Console.WriteLine(i + ":" + total);
             await Task.WhenAll(tsk.ToArray());
 
             foreach (Task t in tsk)
             {
-                if (t.GetType().ToString().IndexOf("Stamp") >= 0)
+                /*if (t.GetType().ToString().IndexOf("Stamp") >= 0)
                 {
                     Stamp stmp = ((Task<Stamp>)t).Result;
                     Console.WriteLine(stmp.ToString());
                     st.Add(stmp);
-                }
+                }*/
                 if (t.GetType().ToString().IndexOf("Coin") >= 0)
                 {
                     Coin cn = ((Task<Coin>)t).Result;
@@ -125,26 +135,26 @@ public static class Timer
         {
             List<Task> tsk = new List<Task>();
             i++;
-            tsk.Add(s.post(Telegram.getChannelDto(0)));
-            tsk.Add(s.load());
+            tsk.Add(s.Post(Cbr.channel));
+            tsk.Add(s.Load());
             Console.WriteLine(i + ":" + total);
             await Task.WhenAll(tsk.ToArray());
             await Task.Delay(1000);
         }
 
-
+        /*
         i = 0;
         total = st.Count;
         foreach (Stamp s in st)
         {
             List<Task> tsk = new List<Task>();
             i++;
-            tsk.Add(s.post(Telegram.getChannelDto(1)));
-            tsk.Add(s.load());
+            tsk.Add(s.Post(Telegram.GetChannelDto(1)));
+            tsk.Add(s.Load());
             Console.WriteLine(i + ":" + total);
             await Task.WhenAll(tsk.ToArray());
             await Task.Delay(1000);
-        }
+        }*/
     }
 }
 

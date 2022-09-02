@@ -5,24 +5,21 @@ using Npgsql;
 
 public static class CbrParser
 {
-    static CbrParser()
-	{
-
-	}
-    public static string getNameFromHtml(HtmlDocument doc)
+    static CbrParser(){}
+    public static string GetNameFromHtml(HtmlDocument doc)
     {
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//span[contains(@class, 'referenceable')]");
         if (res != null)
-            return parseName(res[0].InnerText);
-        return parseName("");
+            return ParseName(res[0].InnerText);
+        return ParseName("");
     }
-    public static string parseName(string nameHtml)
+    public static string ParseName(string nameHtml)
     {
         nameHtml = nameHtml.Replace("&nbsp;", " ");
         return nameHtml;
     }
 
-    public static DateOnly getDateFromHtml(HtmlDocument doc)
+    public static DateOnly GetDateFromHtml(HtmlDocument doc)
     {
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'money_option_title')]");
         if (res != null)
@@ -30,18 +27,18 @@ public static class CbrParser
             {
                 if (node.InnerText.Contains("Дата выпуска"))
                 {
-                    return parseDate(node.SelectSingleNode("..//div[contains(@class, 'money_option_value')]").InnerText);
+                    return ParseDate(node.SelectSingleNode("..//div[contains(@class, 'money_option_value')]").InnerText);
                 }
             }
-        return parseDate("");
+        return ParseDate("");
     }
-    public static DateOnly parseDate(string dateHtml)
+    public static DateOnly ParseDate(string dateHtml)
     {
         string[] spt = dateHtml.Split(".");
         return new DateOnly(int.Parse(spt[2]), int.Parse(spt[1]), int.Parse(spt[0]));
     }
 
-    public static string getSeriesFromHtml(HtmlDocument doc)
+    public static string GetSeriesFromHtml(HtmlDocument doc)
     {
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'commemor-coin_intro_text')]");
         if (res != null)
@@ -49,12 +46,12 @@ public static class CbrParser
             {
                 if (node.InnerText.Contains("Серия"))
                 {
-                    return parseSeries(node.InnerText);
+                    return ParseSeries(node.InnerText);
                 }
             }
-        return parseSeries("");
+        return ParseSeries("");
     }
-    public static string parseSeries(string seriesHtml)
+    public static string ParseSeries(string seriesHtml)
     {
         if (seriesHtml != "")
         {
@@ -65,7 +62,7 @@ public static class CbrParser
         return "";
     }
 
-    public static string getCatalogIdFromHtml(HtmlDocument doc)
+    public static string GetCatalogIdFromHtml(HtmlDocument doc)
     {
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'money_option_title')]");
         if (res != null)
@@ -73,17 +70,17 @@ public static class CbrParser
             {
                 if (node.InnerText.Contains("Каталожный номер"))
                 {
-                    return parseCatalogId(node.SelectSingleNode("..//div[contains(@class, 'money_option_value')]").InnerText);
+                    return ParseCatalogId(node.SelectSingleNode("..//div[contains(@class, 'money_option_value')]").InnerText);
                 }
             }
-        return parseCatalogId("notfound");
+        return ParseCatalogId("notfound");
     }
-    public static string parseCatalogId(string catalogIdHtml)
+    public static string ParseCatalogId(string catalogIdHtml)
     {
         return catalogIdHtml;
     }
 
-    public static decimal getNominalIdFromHtml(HtmlDocument doc)
+    public static decimal GetNominalIdFromHtml(HtmlDocument doc)
     {
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'characteristic_denomenation')]");
         if (res != null)
@@ -91,18 +88,18 @@ public static class CbrParser
             {
                 if (node.InnerText.Contains("Номинал"))
                 {
-                    return parseNominal(node.SelectSingleNode("..//div[contains(@class, 'characteristic_value')]").InnerText);
+                    return ParseNominal(node.SelectSingleNode("..//div[contains(@class, 'characteristic_value')]").InnerText);
                 }
             }
-        return parseNominal("");
+        return ParseNominal("");
     }
-    public static decimal parseNominal(string nominalHtml)
+    public static decimal ParseNominal(string nominalHtml)
     {
         string[] spt = nominalHtml.Split(" ");
         return decimal.Parse(spt[0]);
     }
 
-    public static double getFirstDimentionFromHtml(HtmlDocument doc)
+    public static double GetFirstDimentionFromHtml(HtmlDocument doc)
     {
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'characteristic_denomenation')]");
         if (res != null)
@@ -110,13 +107,13 @@ public static class CbrParser
             {
                 if (node.InnerText.Contains("Диаметр") || node.InnerText.Contains("Длина"))
                 {
-                    return parseDimention(node.SelectSingleNode("..//div[contains(@class, 'characteristic_value')]").InnerText);
+                    return ParseDimention(node.SelectSingleNode("..//div[contains(@class, 'characteristic_value')]").InnerText);
                 }
             }
-        return parseDimention("");
+        return ParseDimention("");
     }
 
-    public static double getSecondDimentionFromHtml(HtmlDocument doc)
+    public static double GetSecondDimentionFromHtml(HtmlDocument doc)
     {
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'characteristic_denomenation')]");
         if (res != null)
@@ -124,12 +121,12 @@ public static class CbrParser
             {
                 if (node.InnerText.Contains("Ширина"))
                 {
-                    return parseDimention(node.SelectSingleNode("..//div[contains(@class, 'characteristic_value')]").InnerText);
+                    return ParseDimention(node.SelectSingleNode("..//div[contains(@class, 'characteristic_value')]").InnerText);
                 }
             }
-        return parseDimention("");
+        return ParseDimention("");
     }
-    public static double parseDimention(string diameterHtml)
+    public static double ParseDimention(string diameterHtml)
     {
         try
         {
@@ -145,7 +142,7 @@ public static class CbrParser
     }
 
 
-    public static string getMetalFromHtml(HtmlDocument doc)
+    public static string GetMetalFromHtml(HtmlDocument doc)
     {
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'characteristic_denomenation')]");
         if (res != null)
@@ -163,7 +160,7 @@ public static class CbrParser
         return metalHtml;
     }
 
-    public static long getCirculationFromHtml(HtmlDocument doc)
+    public static long GetCirculationFromHtml(HtmlDocument doc)
     {
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'characteristic_denomenation')]");
         if (res != null)
@@ -171,12 +168,12 @@ public static class CbrParser
             {
                 if (node.InnerText.Contains("Тираж"))
                 {
-                    return parseCirculation(node.SelectSingleNode("..//div[contains(@class, 'characteristic_value')]").InnerText);
+                    return ParseCirculation(node.SelectSingleNode("..//div[contains(@class, 'characteristic_value')]").InnerText);
                 }
             }
-        return parseCirculation("");
+        return ParseCirculation("");
     }
-    public static long parseCirculation(string circulationHtml)
+    public static long ParseCirculation(string circulationHtml)
     {
         Regex regex = new Regex(@"\d(\d|\s)+");
         MatchCollection matches = regex.Matches(circulationHtml);
@@ -185,7 +182,7 @@ public static class CbrParser
     }
 
 
-    public static string getObverseFromHtml(HtmlDocument doc)
+    public static string GetObverseFromHtml(HtmlDocument doc)
     {
         HtmlNodeCollection res2 = doc.DocumentNode.SelectNodes(".//div[contains(@class, 'commemor-coin_images')]");
         if (res2 != null)
@@ -195,7 +192,7 @@ public static class CbrParser
         return "";
     }
 
-    public static string getReverseFromHtml(HtmlDocument doc)
+    public static string GetReverseFromHtml(HtmlDocument doc)
     {
         HtmlNodeCollection res2 = doc.DocumentNode.SelectNodes(".//div[contains(@class, 'commemor-coin_images')]");
         if (res2 != null)

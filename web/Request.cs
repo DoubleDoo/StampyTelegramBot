@@ -16,17 +16,17 @@ public static class Request
         web = new HtmlWeb();
     }
 
-    public static HtmlDocument balansedRequest(string link)
+    public static HtmlDocument BalansedRequest(string link)
     {
         try
         {
-            return nonProxyRequest(link);
+            return NonProxyRequest(link);
         }
         catch (Exception ex)
         {
             try
             {
-                return proxyRequest(link);
+                return ProxyRequest(link);
             }
             catch(Exception ex2) 
             { 
@@ -37,13 +37,13 @@ public static class Request
 
     }
 
-    public static HtmlDocument nonProxyRequest(string link)
+    public static HtmlDocument NonProxyRequest(string link)
     {
         HtmlDocument doc = web.Load(link);
             return doc;
     }
 
-    public static HtmlDocument proxyRequest(string link)
+    public static HtmlDocument ProxyRequest(string link)
     {
         HtmlDocument doc = web.Load(link, myProxyIP, myPort, userId, password);
         return doc;
