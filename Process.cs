@@ -1,14 +1,12 @@
-﻿using HtmlAgilityPack;
-using Npgsql;
-using System.Timers;
+﻿using System.Timers;
 
 public static class Process
 {
     static System.Timers.Timer processTimer;
     static System.Timers.Timer initTimer;
-    static bool inWork=false;
+    static bool inWork = false;
 
-    static Process(){}
+    static Process() { }
 
     public static async Task Init()
     {

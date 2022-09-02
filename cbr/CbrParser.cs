@@ -1,25 +1,62 @@
-﻿using System;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using HtmlAgilityPack;
-using Npgsql;
 
+
+///<summary>
+///Статический клас для парсинга данных с сайта https://www.cbr.ru
+///</summary>
 public static class CbrParser
 {
-    static CbrParser(){}
-    public static string GetNameFromHtml(HtmlDocument doc)
+    ///<summary>
+    ///Статический Конструктор для создания нового объекта класса
+    ///</summary>
+    ///<returns>
+    ///Объект класса
+    ///</returns>
+    static CbrParser() { }
+
+    ///<summary>
+    ///Функция для получения данных для поля Coin.Name с интернет страницы объекта
+    ///</summary>
+    ///<remarks>
+    ///Функция ищет на странице нужные данные и преобразует в строку для их дальнейшей обработки
+    ///</remarks>
+    ///<param name="doc">
+    ///HtmlDocument страницы с данными
+    ///</param>
+    public static string GetName(HtmlDocument doc)
     {
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//span[contains(@class, 'referenceable')]");
         if (res != null)
             return ParseName(res[0].InnerText);
         return ParseName("");
     }
-    public static string ParseName(string nameHtml)
+
+    ///<summary>
+    ///Функция обработки данных для поля Coin.Name
+    ///</summary>
+    ///<remarks>
+    ///Функция обрабатывает строковое представление информации, для дальнейшего хранения
+    ///</remarks>
+    ///<param name="str">
+    ///Строка для обработки
+    ///</param>
+    public static string ParseName(string str)
     {
-        nameHtml = nameHtml.Replace("&nbsp;", " ");
-        return nameHtml;
+        str = str.Replace("&nbsp;", " ");
+        return str;
     }
 
-    public static DateOnly GetDateFromHtml(HtmlDocument doc)
+    ///<summary>
+    ///Функция для получения данных для поля Coin.Date с интернет страницы объекта
+    ///</summary>
+    ///<remarks>
+    ///Функция ищет на странице нужные данные и преобразует в строку для их дальнейшей обработки
+    ///</remarks>
+    ///<param name="doc">
+    ///HtmlDocument страницы с данными
+    ///</param>
+    public static DateOnly GetDate(HtmlDocument doc)
     {
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'money_option_title')]");
         if (res != null)
@@ -32,13 +69,32 @@ public static class CbrParser
             }
         return ParseDate("");
     }
-    public static DateOnly ParseDate(string dateHtml)
+
+    ///<summary>
+    ///Функция обработки данных для поля Coin.Date
+    ///</summary>
+    ///<remarks>
+    ///Функция обрабатывает строковое представление информации, для дальнейшего хранения
+    ///</remarks>
+    ///<param name="str">
+    ///Строка для обработки
+    ///</param>
+    public static DateOnly ParseDate(string str)
     {
-        string[] spt = dateHtml.Split(".");
+        string[] spt = str.Split(".");
         return new DateOnly(int.Parse(spt[2]), int.Parse(spt[1]), int.Parse(spt[0]));
     }
 
-    public static string GetSeriesFromHtml(HtmlDocument doc)
+    ///<summary>
+    ///Функция для получения данных для поля Coin.Series с интернет страницы объекта
+    ///</summary>
+    ///<remarks>
+    ///Функция ищет на странице нужные данные и преобразует в строку для их дальнейшей обработки
+    ///</remarks>
+    ///<param name="doc">
+    ///HtmlDocument страницы с данными
+    ///</param>
+    public static string GetSeries(HtmlDocument doc)
     {
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'commemor-coin_intro_text')]");
         if (res != null)
@@ -51,18 +107,37 @@ public static class CbrParser
             }
         return ParseSeries("");
     }
-    public static string ParseSeries(string seriesHtml)
+
+    ///<summary>
+    ///Функция обработки данных для поля Coin.Series
+    ///</summary>
+    ///<remarks>
+    ///Функция обрабатывает строковое представление информации, для дальнейшего хранения
+    ///</remarks>
+    ///<param name="str">
+    ///Строка для обработки
+    ///</param>
+    public static string ParseSeries(string str)
     {
-        if (seriesHtml != "")
+        if (str != "")
         {
-            seriesHtml = seriesHtml.Replace("Серия:", "");
-            seriesHtml = seriesHtml.Replace("Cерия", "");
-            return seriesHtml.Trim();
+            str = str.Replace("Серия:", "");
+            str = str.Replace("Cерия", "");
+            return str.Trim();
         }
         return "";
     }
 
-    public static string GetCatalogIdFromHtml(HtmlDocument doc)
+    ///<summary>
+    ///Функция для получения данных для поля Coin.CatalogId с интернет страницы объекта
+    ///</summary>
+    ///<remarks>
+    ///Функция ищет на странице нужные данные и преобразует в строку для их дальнейшей обработки
+    ///</remarks>
+    ///<param name="doc">
+    ///HtmlDocument страницы с данными
+    ///</param>
+    public static string GetCatalogId(HtmlDocument doc)
     {
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'money_option_title')]");
         if (res != null)
@@ -75,12 +150,31 @@ public static class CbrParser
             }
         return ParseCatalogId("notfound");
     }
-    public static string ParseCatalogId(string catalogIdHtml)
+
+    ///<summary>
+    ///Функция обработки данных для поля Coin.CatalogId
+    ///</summary>
+    ///<remarks>
+    ///Функция обрабатывает строковое представление информации, для дальнейшего хранения
+    ///</remarks>
+    ///<param name="str">
+    ///Строка для обработки
+    ///</param>
+    public static string ParseCatalogId(string str)
     {
-        return catalogIdHtml;
+        return str;
     }
 
-    public static decimal GetNominalIdFromHtml(HtmlDocument doc)
+    ///<summary>
+    ///Функция для получения данных для поля Coin.Nominal с интернет страницы объекта
+    ///</summary>
+    ///<remarks>
+    ///Функция ищет на странице нужные данные и преобразует в строку для их дальнейшей обработки
+    ///</remarks>
+    ///<param name="doc">
+    ///HtmlDocument страницы с данными
+    ///</param>
+    public static decimal GetNominal(HtmlDocument doc)
     {
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'characteristic_denomenation')]");
         if (res != null)
@@ -93,13 +187,32 @@ public static class CbrParser
             }
         return ParseNominal("");
     }
-    public static decimal ParseNominal(string nominalHtml)
+
+    ///<summary>
+    ///Функция обработки данных для поля Coin.Nominal
+    ///</summary>
+    ///<remarks>
+    ///Функция обрабатывает строковое представление информации, для дальнейшего хранения
+    ///</remarks>
+    ///<param name="str">
+    ///Строка для обработки
+    ///</param>
+    public static decimal ParseNominal(string str)
     {
-        string[] spt = nominalHtml.Split(" ");
+        string[] spt = str.Split(" ");
         return decimal.Parse(spt[0]);
     }
 
-    public static double GetFirstDimentionFromHtml(HtmlDocument doc)
+    ///<summary>
+    ///Функция для получения данных для поля Coin.FirstDimention с интернет страницы объекта
+    ///</summary>
+    ///<remarks>
+    ///Функция ищет на странице нужные данные и преобразует в строку для их дальнейшей обработки
+    ///</remarks>
+    ///<param name="doc">
+    ///HtmlDocument страницы с данными
+    ///</param>
+    public static double GetFirstDimention(HtmlDocument doc)
     {
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'characteristic_denomenation')]");
         if (res != null)
@@ -113,7 +226,16 @@ public static class CbrParser
         return ParseDimention("");
     }
 
-    public static double GetSecondDimentionFromHtml(HtmlDocument doc)
+    ///<summary>
+    ///Функция для получения данных для поля Coin.SecondDimention с интернет страницы объекта
+    ///</summary>
+    ///<remarks>
+    ///Функция ищет на странице нужные данные и преобразует в строку для их дальнейшей обработки
+    ///</remarks>
+    ///<param name="doc">
+    ///HtmlDocument страницы с данными
+    ///</param>
+    public static double GetSecondDimention(HtmlDocument doc)
     {
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'characteristic_denomenation')]");
         if (res != null)
@@ -126,14 +248,24 @@ public static class CbrParser
             }
         return ParseDimention("");
     }
-    public static double ParseDimention(string diameterHtml)
+
+    ///<summary>
+    ///Функция обработки данных для поля Coin.FirstDimention и Coin.SecondDimention
+    ///</summary>
+    ///<remarks>
+    ///Функция обрабатывает строковое представление информации, для дальнейшего хранения
+    ///</remarks>
+    ///<param name="str">
+    ///Строка для обработки
+    ///</param>
+    public static double ParseDimention(string str)
     {
         try
         {
             Regex regex = new Regex(@"\d(\d|,)+");
-            MatchCollection matches = regex.Matches(diameterHtml);
-            diameterHtml = matches[0].Value.Replace(",", ".");
-            return double.Parse(diameterHtml);
+            MatchCollection matches = regex.Matches(str);
+            str = matches[0].Value.Replace(",", ".");
+            return double.Parse(str);
         }
         catch (Exception e)
         {
@@ -141,8 +273,16 @@ public static class CbrParser
         }
     }
 
-
-    public static string GetMetalFromHtml(HtmlDocument doc)
+    ///<summary>
+    ///Функция для получения данных для поля Coin.Material с интернет страницы объекта
+    ///</summary>
+    ///<remarks>
+    ///Функция ищет на странице нужные данные и преобразует в строку для их дальнейшей обработки
+    ///</remarks>
+    ///<param name="doc">
+    ///HtmlDocument страницы с данными
+    ///</param>
+    public static string GetMaterial(HtmlDocument doc)
     {
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'characteristic_denomenation')]");
         if (res != null)
@@ -150,17 +290,36 @@ public static class CbrParser
             {
                 if (node.InnerText.Contains("Сплав") || node.InnerText.Contains("Материал") || node.InnerText.Contains("Металл"))
                 {
-                    return parseMetal(node.SelectSingleNode("..//div[contains(@class, 'characteristic_value')]").InnerText);
+                    return parseMaterial(node.SelectSingleNode("..//div[contains(@class, 'characteristic_value')]").InnerText);
                 }
             }
-        return parseMetal("");
-    }
-    public static string parseMetal(string metalHtml)
-    {
-        return metalHtml;
+        return parseMaterial("");
     }
 
-    public static long GetCirculationFromHtml(HtmlDocument doc)
+    ///<summary>
+    ///Функция обработки данных для поля Coin.Material
+    ///</summary>
+    ///<remarks>
+    ///Функция обрабатывает строковое представление информации, для дальнейшего хранения
+    ///</remarks>
+    ///<param name="str">
+    ///Строка для обработки
+    ///</param>
+    public static string parseMaterial(string str)
+    {
+        return str;
+    }
+
+    ///<summary>
+    ///Функция для получения данных для поля Coin.Circulation с интернет страницы объекта
+    ///</summary>
+    ///<remarks>
+    ///Функция ищет на странице нужные данные и преобразует в строку для их дальнейшей обработки
+    ///</remarks>
+    ///<param name="doc">
+    ///HtmlDocument страницы с данными
+    ///</param>
+    public static long GetCirculation(HtmlDocument doc)
     {
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'characteristic_denomenation')]");
         if (res != null)
@@ -173,16 +332,34 @@ public static class CbrParser
             }
         return ParseCirculation("");
     }
-    public static long ParseCirculation(string circulationHtml)
+
+    ///<summary>
+    ///Функция обработки данных для поля Coin.Circulation
+    ///</summary>
+    ///<remarks>
+    ///Функция обрабатывает строковое представление информации, для дальнейшего хранения
+    ///</remarks>
+    ///<param name="str">
+    ///Строка для обработки
+    ///</param>
+    public static long ParseCirculation(string str)
     {
         Regex regex = new Regex(@"\d(\d|\s)+");
-        MatchCollection matches = regex.Matches(circulationHtml);
-        circulationHtml = matches[0].Value.Replace(" ", "");
-        return long.Parse(circulationHtml);
+        MatchCollection matches = regex.Matches(str);
+        str = matches[0].Value.Replace(" ", "");
+        return long.Parse(str);
     }
 
-
-    public static string GetObverseFromHtml(HtmlDocument doc)
+    ///<summary>
+    ///Функция для получения данных для поля Coin.Obverse с интернет страницы объекта
+    ///</summary>
+    ///<remarks>
+    ///Функция ищет на странице нужные данные и преобразует в строку для их дальнейшей обработки
+    ///</remarks>
+    ///<param name="doc">
+    ///HtmlDocument страницы с данными
+    ///</param>
+    public static string GetObverse(HtmlDocument doc)
     {
         HtmlNodeCollection res2 = doc.DocumentNode.SelectNodes(".//div[contains(@class, 'commemor-coin_images')]");
         if (res2 != null)
@@ -192,7 +369,16 @@ public static class CbrParser
         return "";
     }
 
-    public static string GetReverseFromHtml(HtmlDocument doc)
+    ///<summary>
+    ///Функция для получения данных для поля Coin.Reverse с интернет страницы объекта
+    ///</summary>
+    ///<remarks>
+    ///Функция ищет на странице нужные данные и преобразует в строку для их дальнейшей обработки
+    ///</remarks>
+    ///<param name="doc">
+    ///HtmlDocument страницы с данными
+    ///</param>
+    public static string GetReverse(HtmlDocument doc)
     {
         HtmlNodeCollection res2 = doc.DocumentNode.SelectNodes(".//div[contains(@class, 'commemor-coin_images')]");
         if (res2 != null)

@@ -1,5 +1,5 @@
-﻿using System;
-using TL;
+﻿using TL;
+
 ///<summary>
 ///Класс для хранения объектов марок
 ///</summary>
@@ -75,7 +75,8 @@ public class TelegramChannel
     ///<returns>
     ///Асинхронная задача с результатом Tl.Channel
     ///</returns>
-    private async Task<Channel> Check(){
+    private async Task<Channel> Check()
+    {
         return await Telegram.GetChannel(Name);
     }
 
@@ -89,7 +90,7 @@ public class TelegramChannel
     {
         await Telegram.CreateChannel(Name, Description);
         await Task.Delay(5000);
-        Channel channel=await Telegram.GetChannel(Name);
+        Channel channel = await Telegram.GetChannel(Name);
         await Task.Delay(5000);
         await Telegram.UpdateUsername(channel, Link);
         await Task.Delay(10000);
@@ -107,7 +108,7 @@ public class TelegramChannel
     public async Task<Channel> Update()
     {
         Channel channel = await Check();
-        if (channel==null)
+        if (channel == null)
         {
             channel = await Create();
         }

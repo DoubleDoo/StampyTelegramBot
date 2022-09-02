@@ -1,7 +1,4 @@
-﻿using System;
-using Npgsql;
-
-public interface IImageLoader
+﻿public interface IImageLoader
 {
 
     ///<summary>

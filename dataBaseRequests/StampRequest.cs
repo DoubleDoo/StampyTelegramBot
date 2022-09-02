@@ -1,5 +1,4 @@
-﻿using System;
-using Npgsql;
+﻿using Npgsql;
 
 ///<summary>
 ///Статичный клас для взаимодействия с объектами класса Stamp и базой данных

@@ -1,13 +1,10 @@
-﻿using System;
-using Npgsql;
-
+﻿using Npgsql;
 
 ///<summary>
 ///Статичный клас для взаимодействия базой данных
 ///</summary>
 public static class PostgreSQLSingle
 {
-
     ///<summary>
     ///Поле для хранения соединения с базой данных
     ///</summary>

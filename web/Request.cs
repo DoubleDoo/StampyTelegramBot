@@ -1,17 +1,14 @@
-﻿using System;
-using HtmlAgilityPack;
-using Npgsql;
-
+﻿using HtmlAgilityPack;
 
 public static class Request
 {
-	private static string myProxyIP = "193.23.50.233";
-	private static int myPort = 10185;
-	private static string userId = "dodubina"; 
-	private static string password = "7140043";
+    private static string myProxyIP = "193.23.50.233";
+    private static int myPort = 10185;
+    private static string userId = "dodubina";
+    private static string password = "7140043";
     private static HtmlWeb web;
 
-    static Request() 
+    static Request()
     {
         web = new HtmlWeb();
     }
@@ -28,8 +25,8 @@ public static class Request
             {
                 return ProxyRequest(link);
             }
-            catch(Exception ex2) 
-            { 
+            catch (Exception ex2)
+            {
                 Console.WriteLine(ex2.Message);
             }
         }
@@ -40,7 +37,7 @@ public static class Request
     public static HtmlDocument NonProxyRequest(string link)
     {
         HtmlDocument doc = web.Load(link);
-            return doc;
+        return doc;
     }
 
     public static HtmlDocument ProxyRequest(string link)

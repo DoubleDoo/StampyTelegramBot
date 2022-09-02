@@ -1,6 +1,4 @@
-﻿using System;
-
-///<summary>
+﻿///<summary>
 ///Класс для хранения объектов марок
 ///</summary>
 public class Stamp : Collectable, IImageLoader

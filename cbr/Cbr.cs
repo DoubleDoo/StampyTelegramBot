@@ -1,20 +1,51 @@
-﻿using System;
-using System.Text.RegularExpressions;
-using HtmlAgilityPack;
-using Npgsql;
+﻿using HtmlAgilityPack;
 
+///<summary>
+///Статический клас для сбора данных с сайта https://www.cbr.ru
+///</summary>
 public static class Cbr
 {
-
+    ///<summary>
+    ///Поле для хранения ссылки на ресурс в интернете
+    ///</summary>
+    ///<value>
+    ///Ссылка на сайт
+    ///</value>
     public static string linkBase = "https://www.cbr.ru";
+
+    ///<summary>
+    ///Поле для хранения ссылки на каталог для поиска
+    ///</summary>
+    ///<value>
+    ///Каталог сайта
+    ///</value>
     public static string catalog = linkBase + "/cash_circulation/memorable_coins/coins_base/";
+
+    ///<summary>
+    ///Поле для хранения привязанного телеграм канала
+    ///</summary>
+    ///<value>
+    ///TelegramChannel привязанный к ресурсу
+    ///</value>
     public static TelegramChannel channel = new TelegramChannel("CBR Coins", "Coins from cbr.ru", "cbrcoins", "cbr.jpg");
 
-    static Cbr()
-    {
+    ///<summary>
+    ///Статический Конструктор для создания нового объекта класса
+    ///</summary>
+    ///<returns>
+    ///Объект класса
+    ///</returns>
+    static Cbr() { }
 
-    }
-
+    ///<summary>
+    ///Функция для построения запроса к ресурсу для поиска объектов
+    ///</summary>
+    ///<remarks>
+    ///Функция строит запрос для получения списка всех обьектов которые опубликованы ресурсом
+    ///</remarks>
+    ///<returns>
+    ///Строка запроса
+    ///</returns>
     public static string BuildRequest(bool posted, string searchPhrase, int year, int serie_id, int nominal, int metal_id, int tab, int page, int sort, string sort_direction)
     {
         string req = catalog +
@@ -31,7 +62,12 @@ public static class Cbr
         return req;
     }
 
-
+    ///<summary>
+    ///Функция для сбора всех сылок ведущих на объекты ресурса
+    ///</summary>
+    ///<returns>
+    ///Список ссылок
+    ///</returns>
     public static async Task<List<string>> ScrapPage()
     {
         HtmlDocument doc = Request.BalansedRequest(Cbr.BuildRequest(true, "", 2022, 0, -1, 0, 1, 1, 99, "down"));
@@ -50,6 +86,15 @@ public static class Cbr
         return links;
     }
 
+    ///<summary>
+    ///Функция для фильтрации только новых ссылок на объекты
+    ///</summary>
+    ///<remarks>
+    ///Функция собирает ссылки с ресурса и с базы данных и выявляет ссылки отсутствующие в базе данных
+    ///</remarks>
+    ///<returns>
+    ///Список новых для базы данных ссылок
+    ///</returns>
     public static async Task<List<string>> ScrapPageNew()
     {
         Task<List<string>> links = ScrapPage();
@@ -75,21 +120,30 @@ public static class Cbr
         return ln;
     }
 
+    ///<summary>
+    ///Функция для создания объекта по распаршеным данным с его страницы на ресурсе
+    ///</summary>
+    ///<returns>
+    ///Объект Coin
+    ///</returns>
+    ///<param name="link">
+    ///Сылка на объект
+    ///</param>
     public static async Task<Coin> Create(string link)
     {
         HtmlDocument doc = Request.BalansedRequest(link);
         Coin cn = new Coin(link,
-                          CbrParser.GetCatalogIdFromHtml(doc),
-                          CbrParser.GetNameFromHtml(doc),
-                          CbrParser.GetSeriesFromHtml(doc),
-                          CbrParser.GetMetalFromHtml(doc),
-                          CbrParser.GetNominalIdFromHtml(doc),
-                          CbrParser.GetCirculationFromHtml(doc),
-                          CbrParser.GetDateFromHtml(doc),
-                          CbrParser.GetFirstDimentionFromHtml(doc),
-                          CbrParser.GetSecondDimentionFromHtml(doc),
-                          CbrParser.GetObverseFromHtml(doc),
-                          CbrParser.GetReverseFromHtml(doc)
+                          CbrParser.GetCatalogId(doc),
+                          CbrParser.GetName(doc),
+                          CbrParser.GetSeries(doc),
+                          CbrParser.GetMaterial(doc),
+                          CbrParser.GetNominal(doc),
+                          CbrParser.GetCirculation(doc),
+                          CbrParser.GetDate(doc),
+                          CbrParser.GetFirstDimention(doc),
+                          CbrParser.GetSecondDimention(doc),
+                          CbrParser.GetObverse(doc),
+                          CbrParser.GetReverse(doc)
         );
         return cn;
     }

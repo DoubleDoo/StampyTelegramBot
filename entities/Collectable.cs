@@ -1,6 +1,4 @@
-﻿using System;
-
-///<summary>
+﻿///<summary>
 ///Абстрактный класс предоставлющий общие поля для коллекционных объектов
 ///</summary>
 public abstract class Collectable : Base

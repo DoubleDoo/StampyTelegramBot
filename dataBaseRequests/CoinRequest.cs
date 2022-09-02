@@ -1,6 +1,4 @@
-﻿using System;
-using Npgsql;
-
+﻿using Npgsql;
 
 ///<summary>
 ///Статичный клас для взаимодействия с объектами класса Coin и базой данных

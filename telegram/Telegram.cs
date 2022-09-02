@@ -3,9 +3,7 @@ using WTelegram;
 using TL;
 
 
-
-
-public static  class Telegram
+public static class Telegram
 {
     private static WTelegram.Client clnt;
     public static TL.User usr;
@@ -39,16 +37,16 @@ public static  class Telegram
         await clnt.SendMessageAsync((InputPeer)channel, msg, entities: entities);
     }
 
-    public static async Task Sendmessage(Channel channel, string msg,Image[] imgs)
+    public static async Task Sendmessage(Channel channel, string msg, Image[] imgs)
     {
-        List<InputMedia> media=new List<InputMedia>();
-        foreach(Image im in imgs)
+        List<InputMedia> media = new List<InputMedia>();
+        foreach (Image im in imgs)
         {
-            var file=await clnt.UploadFileAsync(@"" + Environment.CurrentDirectory + "/data/img/" + im.Id + ".jpg", null);
+            var file = await clnt.UploadFileAsync(@"" + Environment.CurrentDirectory + "/data/img/" + im.Id + ".jpg", null);
             media.Add(new InputMediaUploadedPhoto { file = file });
         }
         var entities = clnt.HtmlToEntities(ref msg);
-        await clnt.SendAlbumAsync((InputPeer)channel, media.ToArray(),msg,entities:entities);
+        await clnt.SendAlbumAsync((InputPeer)channel, media.ToArray(), msg, entities: entities);
     }
 
 
@@ -56,7 +54,7 @@ public static  class Telegram
     {
         Messages_Dialogs chats = await clnt.Messages_GetAllDialogs();
         List<ChatBase> dialogs = new List<ChatBase>();
-        foreach ((long id,ChatBase chat) in chats.chats)
+        foreach ((long id, ChatBase chat) in chats.chats)
         {
             dialogs.Add(chat);
         }
@@ -103,7 +101,7 @@ public static  class Telegram
         return null;
     }
 
-    public static async Task<Channel> CreateChannel(string name,string description)
+    public static async Task<Channel> CreateChannel(string name, string description)
     {
         await clnt.Channels_CreateChannel(name, description);
         return await GetChannel(name);
