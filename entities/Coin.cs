@@ -205,6 +205,8 @@ public class Coin : Collectable, IImageLoader
             "\nMetal:" + Material +
             "\nCirculation:" + Circulation +
             "\nLink:" + Link +
+            "\nObverse:\n" + Obverse.ToString() +
+            "\nReverse:\n" + Reverse.ToString() +
             "\n";
     }
 }

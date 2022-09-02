@@ -14,6 +14,7 @@ public static class Process
         await Telegram.Login();
         await PostgreSQLSingle.ConnectToDb();
         await Cbr.channel.Update();
+        await Postdonbass.channel.Update();
         await UpdateImageCatalog();
         Console.WriteLine("Initialization finished");
     }
@@ -81,78 +82,75 @@ public static class Process
 
     public static async Task getTest()
     {
-        Queue<string> a = new Queue<string>(await Cbr.ScrapPageNew());
+        Queue<string> cbr = new Queue<string>(await Cbr.ScrapPageNew());
+        Queue<string> postdonbass = new Queue<string>(await Postdonbass.ScrapPageNew());
 
-        List<Coin> cl = new List<Coin>();
-        List<Stamp> st = new List<Stamp>();
+        List<Coin> coins = new List<Coin>();
+        List<Stamp> stamps = new List<Stamp>();
 
         int i = 0;
-        int total = a.Count;
-        while (a.Count > 0)
+        int total = cbr.Count+postdonbass.Count;
+        while (cbr.Count + postdonbass.Count > 0)
         {
-            List<Task> tsk = new List<Task>();
-            if (a.Count > 0)
+            List<Task> tasks = new List<Task>();
+            if (cbr.Count > 0)
             {
                 i++;
-                tsk.Add(Cbr.Create(a.Dequeue()));
+                tasks.Add(Cbr.Create(cbr.Dequeue()));
             }
-            /*
-            if (a.Count > 0)
+            if (postdonbass.Count > 0)
             {
                 i++;
-                tsk.Add(Cbr.Create(a.Dequeue()));
-            }*/
-
+                tasks.Add(Postdonbass.Create(postdonbass.Dequeue()));
+            }
             Console.WriteLine(i + ":" + total);
-            await Task.WhenAll(tsk.ToArray());
+            await Task.WhenAll(tasks.ToArray());
 
-            foreach (Task t in tsk)
+            foreach (Task task in tasks)
             {
-                /*if (t.GetType().ToString().IndexOf("Stamp") >= 0)
+                if (task.GetType().ToString().IndexOf("Stamp") >= 0)
                 {
-                    Stamp stmp = ((Task<Stamp>)t).Result;
-                    Console.WriteLine(stmp.ToString());
-                    st.Add(stmp);
-                }*/
-                if (t.GetType().ToString().IndexOf("Coin") >= 0)
+                    Stamp stamp = ((Task<Stamp>)task).Result;
+                    Console.WriteLine(stamp.ToString());
+                    stamps.Add(stamp);
+                }
+                if (task.GetType().ToString().IndexOf("Coin") >= 0)
                 {
-                    Coin cn = ((Task<Coin>)t).Result;
-                    Console.WriteLine(cn.ToString());
-                    cl.Add(cn);
+                    Coin coin = ((Task<Coin>)task).Result;
+                    Console.WriteLine(coin.ToString());
+                    coins.Add(coin);
                 }
             }
             Console.WriteLine("____________________");
         }
-        Console.WriteLine(st.Count);
-        Console.WriteLine(cl.Count);
 
+        Console.WriteLine("Итого марок : "+stamps.Count);
+        Console.WriteLine("Итого монет : " + coins.Count);
 
         i = 0;
-        total = cl.Count;
-        foreach (Coin s in cl)
+        total = coins.Count;
+        foreach (Coin coin in coins)
         {
             List<Task> tsk = new List<Task>();
             i++;
-            tsk.Add(s.Post(Cbr.channel));
-            tsk.Add(s.Load());
+            tsk.Add(coin.Post(Cbr.channel));
+            tsk.Add(coin.Load());
             Console.WriteLine(i + ":" + total);
             await Task.WhenAll(tsk.ToArray());
             await Task.Delay(1000);
         }
-
-        /*
         i = 0;
-        total = st.Count;
-        foreach (Stamp s in st)
+        total = postdonbass.Count;
+        foreach (Stamp stamp in stamps)
         {
             List<Task> tsk = new List<Task>();
             i++;
-            tsk.Add(s.Post(Telegram.GetChannelDto(1)));
-            tsk.Add(s.Load());
+            tsk.Add(stamp.Post(Postdonbass.channel));
+            tsk.Add(stamp.Load());
             Console.WriteLine(i + ":" + total);
             await Task.WhenAll(tsk.ToArray());
             await Task.Delay(1000);
-        }*/
+        }
     }
 }
 

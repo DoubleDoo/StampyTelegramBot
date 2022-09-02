@@ -229,14 +229,22 @@ public class Stamp : Collectable, IImageLoader
 
     public override string ToString()
     {
-        return "Coin: " + this.Id +
-            "\nName:" + this.Name +
-            "\nDate:" + this.Date +
-            "\nSeries:" + this.Series +
-            "\nCatalogId:" + this.CatalogId +
-            "\nNominal:" + this.Nominal +
-            "\nCirculation:" + this.Circulation +
-            "\nLink:" + this.Link +
+        return "Coin: " + Id +
+            "\nName:" + Name +
+            "\nDate:" + Date +
+            "\nSeries:" + Series +
+            "\nCatalogId:" + CatalogId +
+            "\nNominal:" + Nominal +
+            "\nCirculation:" + Circulation +
+            "\nLink:" + Link +
+            "\nMaterial:" + Material +
+            "\nFormat:" + Format +
+            "\nProtection:" + Protection +
+            "\nPerforation:" + Perforation +
+            "\nPrintMetod:" + PrintMetod +
+            "\nDesign:" + Design +
+            "\nCountry:" + Country +
+            "\nObverse:\n" + Obverse.ToString() +
             "\n";
     }
 }
