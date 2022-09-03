@@ -140,7 +140,7 @@ public static class Process
             await Task.Delay(1000);
         }
         i = 0;
-        total = postdonbass.Count;
+        total = stamps.Count;
         foreach (Stamp stamp in stamps)
         {
             List<Task> tsk = new List<Task>();

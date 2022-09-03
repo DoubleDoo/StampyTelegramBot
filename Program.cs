@@ -25,5 +25,8 @@ Console.WriteLine("_______________________");
 Stamp res3 = await Postdonbass.Create("https://shop.postdonbass.com/filateliya/marki/hudozhestvennaya-pochtovaya-marka-284-s-dnem-respubliki");
 Console.WriteLine(res3.ToString());
 Console.WriteLine("_______________________");
-*/
+Coin c =await Cbr.Create("https://www.cbr.ru/cash_circulation/memorable_coins/coins_base/ShowCoins/?cat_num=5111-0463");
+Console.WriteLine(c.ToString());
+Console.WriteLine("_______________________");*/
+
 Console.ReadLine();
