@@ -18,22 +18,14 @@ public static class PostdonbassParser
     ///</param>
     public static string GetName(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNode res = doc.DocumentNode.SelectSingleNode("//h1[contains(@class, 'stamp-header')]");
-            return ParseName(res.InnerText);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNode is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
+            if (res != null)
+            {
+                return ParseName(res.InnerText);
+            }
+            return "0";
         }
         return "-1";
     }
@@ -49,20 +41,8 @@ public static class PostdonbassParser
     ///</param>
     public static string ParseName(string str)
     {
-        string buffer = str;
-        try
-        {
-            return Parser.ParseString(buffer);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex, str);
-        }
-        return "-1";
+        Console.WriteLine(str);
+        return Parser.ParseString(str);
     }
 
     ///<summary>
@@ -76,28 +56,19 @@ public static class PostdonbassParser
     ///</param>
     public static DateOnly GetDate(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//p");
-            foreach (HtmlNode node in res)
+            if (res != null)
             {
-                if (node.InnerText.Contains("Дата ввода в обращение"))
+                foreach (HtmlNode node in res)
                 {
-                    return ParseDate(node.InnerText);
+                    if (node.InnerText.Contains("Дата ввода в обращение:"))
+                    {
+                        return ParseDate(node.InnerText);
+                    }
                 }
             }
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNodeCollection is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
         }
         return new DateOnly(2222, 2, 22);
     }
@@ -113,22 +84,10 @@ public static class PostdonbassParser
     ///</param>
     public static DateOnly ParseDate(string str)
     {
-        string buffer = str;
-        try
-        {
-            buffer = buffer.Split(":")[1];
-            buffer = buffer.Trim();
-            return Parser.ParseDate(buffer);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex, str);
-        }
-        return new DateOnly(2222, 2, 22);
+        Console.WriteLine(str);
+        str = str.Replace("Дата ввода в обращение:", "");
+        str = str.Trim();
+        return Parser.ParseDate(str);
     }
 
     ///<summary>
@@ -142,23 +101,7 @@ public static class PostdonbassParser
     ///</param>
     public static string GetSeries(HtmlDocument doc)
     {
-        try
-        {
-            return ParseSeries("");
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNodeCollection is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
-        }
-        return "-1";
+        return ParseSeries("-1");
     }
 
     ///<summary>
@@ -172,20 +115,8 @@ public static class PostdonbassParser
     ///</param>
     public static string ParseSeries(string str)
     {
-        string buffer = str;
-        try
-        {
-            return Parser.ParseString(buffer);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex, str);
-        }
-        return "-1";
+        Console.WriteLine(str);
+        return Parser.ParseString(str);
     }
 
     ///<summary>
@@ -199,28 +130,20 @@ public static class PostdonbassParser
     ///</param>
     public static string GetCatalogId(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//p");
-            foreach (HtmlNode node in res)
+            if (res != null)
             {
-                if (node.InnerText.Contains("Номер по каталогу"))
+                foreach (HtmlNode node in res)
                 {
-                    return ParseCatalogId(node.InnerText);
+                    if (node.InnerText.Contains("Номер по каталогу:"))
+                    {
+                        return ParseCatalogId(node.InnerText);
+                    }
                 }
             }
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNodeCollection is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
+            return "0";
         }
         return "-1";
     }
@@ -236,21 +159,9 @@ public static class PostdonbassParser
     ///</param>
     public static string ParseCatalogId(string str)
     {
-        string buffer = str;
-        try
-        {
-            buffer = buffer.Split(":")[1];
-            return Parser.ParseString(buffer);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex, str);
-        }
-        return "-1";
+        Console.WriteLine(str);
+        str = str.Replace("Номер по каталогу:", "");
+        return Parser.ParseString(str);
     }
 
     ///<summary>
@@ -264,28 +175,20 @@ public static class PostdonbassParser
     ///</param>
     public static decimal GetNominal(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//p");
-            foreach (HtmlNode node in res)
+            if (res != null)
             {
-                if (node.InnerText.Contains("Номинал"))
+                foreach (HtmlNode node in res)
                 {
-                    return ParseNominal(node.InnerText);
+                    if (node.InnerText.Contains("Номинал:"))
+                    {
+                        return ParseNominal(node.InnerText);
+                    }
                 }
             }
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNodeCollection is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
+            return 0;
         }
         return -1;
     }
@@ -301,23 +204,11 @@ public static class PostdonbassParser
     ///</param>
     public static decimal ParseNominal(string str)
     {
-        string buffer = str;
-        try
-        {
-            buffer = buffer.Split(":")[1];
-            buffer = buffer.Replace(" ", "");
-            buffer = buffer.Replace("руб.", "");
-            return Parser.ParseDecimal(buffer);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex, str);
-        }
-        return -1;
+        Console.WriteLine(str);
+        str = str.Replace("Номинал:", "");
+        str = str.Replace(" ", "");
+        str = str.Replace("руб.", "");
+        return Parser.ParseDecimal(str);
     }
 
     ///<summary>
@@ -331,28 +222,20 @@ public static class PostdonbassParser
     ///</param>
     public static string GetMaterial(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//p");
-            foreach (HtmlNode node in res)
+            if (res != null)
             {
-                if (node.InnerText.Contains("Бумага"))
+                foreach (HtmlNode node in res)
                 {
-                    return parseMaterial(node.InnerText);
+                    if (node.InnerText.Contains("Бумага:"))
+                    {
+                        return parseMaterial(node.InnerText);
+                    }
                 }
             }
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNodeCollection is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
+            return "0";
         }
         return "-1";
     }
@@ -368,21 +251,9 @@ public static class PostdonbassParser
     ///</param>
     public static string parseMaterial(string str)
     {
-        string buffer = str;
-        try
-        {
-            buffer = buffer.Split(":")[1];
-            return Parser.ParseString(buffer);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex, str);
-        }
-        return "-1";
+        Console.WriteLine(str);
+        str = str.Replace("Бумага:", "");
+        return Parser.ParseString(str);
     }
 
     ///<summary>
@@ -396,28 +267,20 @@ public static class PostdonbassParser
     ///</param>
     public static long GetCirculation(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//p");
-            foreach (HtmlNode node in res)
+            if (res != null)
             {
-                if (node.InnerText.Contains("Тираж"))
+                foreach (HtmlNode node in res)
                 {
-                    return ParseCirculation(node.InnerText);
+                    if (node.InnerText.Contains("Тираж (шт.):"))
+                    {
+                        return ParseCirculation(node.InnerText);
+                    }
                 }
             }
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNodeCollection is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
+            return 0;
         }
         return -1;
     }
@@ -433,23 +296,11 @@ public static class PostdonbassParser
     ///</param>
     public static long ParseCirculation(string str)
     {
-        string buffer = str;
-        try
-        {
-            buffer = buffer.Split(":")[1];
-            buffer = buffer.Replace(" ", "");
-            buffer = buffer.Replace("экз.", "");
-            return Parser.ParseLong(buffer);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex, str);
-        }
-        return -1;
+        Console.WriteLine(str);
+        str = str.Replace("Тираж (шт.):", "");
+        str = str.Replace(" ", "");
+        str = str.Replace("экз.", "");
+        return Parser.ParseLong(str);
     }
 
     ///<summary>
@@ -463,28 +314,20 @@ public static class PostdonbassParser
     ///</param>
     public static string GetObverse(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNode res = doc.DocumentNode.SelectSingleNode(".//ul[contains(@class, 'thumbnails-stamp')]/li/a");
-            return res.SelectSingleNode(".//img").GetAttributeValue("src", "");
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNodeCollection is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
+            if (res != null)
+            {
+                return res.SelectSingleNode(".//img").GetAttributeValue("src", "");
+            }
+            return "0";
         }
         return "-1";
     }
 
     ///<summary>
-    ///Функция для получения данных для поля Stamp.Format с интернет страницы объекта
+    ///Функция для получения данных для поля Stamp.FirstDimention с интернет страницы объекта
     ///</summary>
     ///<remarks>
     ///Функция ищет на странице нужные данные и преобразует в строку для их дальнейшей обработки
@@ -492,36 +335,32 @@ public static class PostdonbassParser
     ///<param name="doc">
     ///HtmlDocument страницы с данными
     ///</param>
-    public static string GetFormat(HtmlDocument doc)
+    public static double GetFirstDimention(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//p");
-            foreach (HtmlNode node in res)
+            if (res != null)
             {
-                if (node.InnerText.Contains("Формат"))
+                foreach (HtmlNode node in res)
                 {
-                    return ParseFormat(node.InnerText);
+                    if (node.InnerText.Contains("Формат (мм):"))
+                    {
+                        return ParseFirstDimention(node.InnerText);
+                    }
+                    else if (node.InnerText.Contains("Размер:"))
+                    {
+                        return ParseFirstDimention(node.InnerText);
+                    }
                 }
             }
+            return 0;
         }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNode is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
-        }
-        return "-1";
+        return -1;
     }
 
     ///<summary>
-    ///Функция обработки данных для поля Stamp.Format
+    ///Функция обработки данных для поля Coin.FirstDimention и Coin.SecondDimention
     ///</summary>
     ///<remarks>
     ///Функция обрабатывает строковое представление информации, для дальнейшего хранения
@@ -529,24 +368,121 @@ public static class PostdonbassParser
     ///<param name="str">
     ///Строка для обработки
     ///</param>
-    public static string ParseFormat(string str)
+    public static double ParseFirstDimention(string str)
     {
-        string buffer = str;
-        try
+        Console.WriteLine(str);
+        str = str.Split(":")[1];
+        if (str.IndexOf("х") >= 0)
         {
-            buffer = buffer.Split(":")[1];
-            return Parser.ParseString(buffer);
+            str = str.Split("х")[0];
         }
-        catch (ArgumentNullException ex)
+        else if (str.IndexOf("*") >= 0)
         {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
+            str = str.Split("*")[0];
         }
-        catch (Exception ex)
+        else if (str.IndexOf("×") >= 0)
         {
-            ExceptionMessage.UnknownExceptionString(ex, str);
+            str = str.Split("×")[0];
+        }
+        Console.WriteLine(str);
+        return double.Parse(Parser.ParseLong(str).ToString());
+    }
+
+    ///<summary>
+    ///Функция для получения данных для поля Stamp.SecondDimention с интернет страницы объекта
+    ///</summary>
+    ///<remarks>
+    ///Функция ищет на странице нужные данные и преобразует в строку для их дальнейшей обработки
+    ///</remarks>
+    ///<param name="doc">
+    ///HtmlDocument страницы с данными
+    ///</param>
+    public static double GetSecondDimention(HtmlDocument doc)
+    {
+        if (doc != null)
+        {
+            HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//p");
+            if (res != null)
+            {
+                foreach (HtmlNode node in res)
+                {
+                    if (node.InnerText.Contains("Формат (мм):"))
+                    {
+                        return ParseSecondDimention(node.InnerText);
+                    }
+                    else if (node.InnerText.Contains("Размер:"))
+                    {
+                        return ParseSecondDimention(node.InnerText);
+                    }
+                }
+            }
+            return 0;
+        }
+        return -1;
+    }
+
+    ///<summary>
+    ///Функция обработки данных для поля Coin.FirstDimention и Coin.SecondDimention
+    ///</summary>
+    ///<remarks>
+    ///Функция обрабатывает строковое представление информации, для дальнейшего хранения
+    ///</remarks>
+    ///<param name="str">
+    ///Строка для обработки
+    ///</param>
+    public static double ParseSecondDimention(string str)
+    {
+        Console.WriteLine(str);
+        str = str.Split(":")[1];
+        if (str.IndexOf("х") >= 0)
+        {
+            str = str.Split("х")[1];
+        }
+        else if (str.IndexOf("*") >= 0)
+        {
+            str = str.Split("*")[1];
+        }
+        else if (str.IndexOf("×") >= 0)
+        {
+            str = str.Split("×")[1];
+        }
+        Console.WriteLine(str);
+        return double.Parse(Parser.ParseLong(str).ToString());
+    }
+
+    
+    /*
+    public static string GetFormat(HtmlDocument doc)
+    {
+        if (doc != null)
+        {
+            HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//p");
+            if (res != null)
+            {
+                foreach (HtmlNode node in res)
+                {
+                    if (node.InnerText.Contains("Формат (мм):"))
+                    {
+                        return ParseFormat(node.InnerText);
+                    } else if (node.InnerText.Contains("Размер:"))
+                    {
+                        return ParseFormat(node.InnerText);
+                    }
+                }
+            }
+            return "0";
         }
         return "-1";
     }
+
+  
+    public static string ParseFormat(string str)
+    {
+        Console.WriteLine(str);
+        str = str.Split(":")[1];
+        return Parser.ParseString(str);
+
+    }*/
 
     ///<summary>
     ///Функция для получения данных для поля Stamp.Protection с интернет страницы объекта
@@ -559,28 +495,20 @@ public static class PostdonbassParser
     ///</param>
     public static string GetProtection(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//p");
-            foreach (HtmlNode node in res)
+            if (res != null)
             {
-                if (node.InnerText.Contains("Защита"))
+                foreach (HtmlNode node in res)
                 {
-                    return ParseProtection(node.InnerText);
+                    if (node.InnerText.Contains("Защита:"))
+                    {
+                        return ParseProtection(node.InnerText);
+                    }
                 }
             }
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNode is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
+            return "0";
         }
         return "-1";
     }
@@ -596,21 +524,9 @@ public static class PostdonbassParser
     ///</param>
     public static string ParseProtection(string str)
     {
-        string buffer = str;
-        try
-        {
-            buffer = buffer.Split(":")[1];
-            return Parser.ParseString(buffer);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex, str);
-        }
-        return "-1";
+        Console.WriteLine(str);
+        str = str.Replace("Защита:", "");
+        return Parser.ParseString(str);
     }
 
     ///<summary>
@@ -624,28 +540,20 @@ public static class PostdonbassParser
     ///</param>
     public static string GetPerforation(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//p");
-            foreach (HtmlNode node in res)
+            if (res != null)
             {
-                if (node.InnerText.Contains("Перфорация"))
+                foreach (HtmlNode node in res)
                 {
-                    return ParsePerforation(node.InnerText);
+                    if (node.InnerText.Contains("Перфорация:"))
+                    {
+                        return ParsePerforation(node.InnerText);
+                    }
                 }
             }
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNode is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
+            return "0";
         }
         return "-1";
     }
@@ -661,21 +569,9 @@ public static class PostdonbassParser
     ///</param>
     public static string ParsePerforation(string str)
     {
-        string buffer = str;
-        try
-        {
-            buffer = buffer.Split(":")[1] + " " + buffer.Split(":")[2];
-            return Parser.ParseString(buffer);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex, str);
-        }
-        return "-1";
+        Console.WriteLine(str);
+        str = str.Replace("Перфорация:", "");
+        return Parser.ParseString(str);
     }
 
     ///<summary>
@@ -689,28 +585,20 @@ public static class PostdonbassParser
     ///</param>
     public static string GetPrintMetod(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//p");
-            foreach (HtmlNode node in res)
+            if (res != null)
             {
-                if (node.InnerText.Contains("Способ печати"))
+                foreach (HtmlNode node in res)
                 {
-                    return ParsePrintMetod(node.InnerText);
+                    if (node.InnerText.Contains("Способ печати:"))
+                    {
+                        return ParsePrintMetod(node.InnerText);
+                    }
                 }
             }
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNode is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
+            return "0";
         }
         return "-1";
     }
@@ -726,21 +614,9 @@ public static class PostdonbassParser
     ///</param>
     public static string ParsePrintMetod(string str)
     {
-        string buffer = str;
-        try
-        {
-            buffer = buffer.Split(":")[1];
-            return Parser.ParseString(buffer);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex, str);
-        }
-        return "-1";
+        Console.WriteLine(str);
+        str = str.Replace("Способ печати:", "");
+        return Parser.ParseString(str);
     }
 
     ///<summary>
@@ -754,28 +630,20 @@ public static class PostdonbassParser
     ///</param>
     public static string GetDesign(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//p");
-            foreach (HtmlNode node in res)
+            if (res != null)
             {
-                if (node.InnerText.Contains("Дизайнер"))
+                foreach (HtmlNode node in res)
                 {
-                    return ParseDesign(node.InnerText);
+                    if (node.InnerText.Contains("Дизайнер:"))
+                    {
+                        return ParseDesign(node.InnerText);
+                    }
                 }
             }
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNode is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
+            return "0";
         }
         return "-1";
     }
@@ -791,21 +659,9 @@ public static class PostdonbassParser
     ///</param>
     public static string ParseDesign(string str)
     {
-        string buffer = str;
-        try
-        {
-            buffer = buffer.Split(":")[1];
-            return Parser.ParseString(buffer);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex, str);
-        }
-        return "-1";
+        Console.WriteLine(str);
+        str = str.Replace("Дизайнер:", "");
+        return Parser.ParseString(str);
     }
 
     ///<summary>
@@ -819,28 +675,20 @@ public static class PostdonbassParser
     ///</param>
     public static string GetCountry(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//p");
-            foreach (HtmlNode node in res)
+            if (res != null)
             {
-                if (node.InnerText.Contains("Страна выпуска"))
+                foreach (HtmlNode node in res)
                 {
-                    return ParseCountry(node.InnerText);
+                    if (node.InnerText.Contains("Страна выпуска:"))
+                    {
+                        return ParseCountry(node.InnerText);
+                    }
                 }
             }
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNode is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
+            return "0";
         }
         return "-1";
     }
@@ -856,20 +704,8 @@ public static class PostdonbassParser
     ///</param>
     public static string ParseCountry(string str)
     {
-        string buffer = str;
-        try
-        {
-            buffer = buffer.Split(":")[1];
-            return Parser.ParseString(buffer);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex, str);
-        }
-        return "-1";
+        Console.WriteLine(str);
+        str = str.Replace("Страна выпуска:", "");
+        return Parser.ParseString(str);
     }
 }

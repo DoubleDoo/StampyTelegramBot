@@ -60,6 +60,14 @@ public abstract class Collectable : Base
     public string Material { get; set; }
 
     ///<summary>
+    ///Поле для хранения страны
+    ///</summary>
+    ///<value>
+    ///Страна объекта
+    ///</value>
+    public string Country { get; set; }
+
+    ///<summary>
     ///Конструктор для создания нового объекта класса
     ///</summary>
     ///<returns>
@@ -89,7 +97,7 @@ public abstract class Collectable : Base
     ///<param name="link">
     ///Ссылка на источник данных
     ///</param>
-    public Collectable(string link, string catalogid, string name, string series, string material, decimal nominal, long circulation, DateOnly date) : base(link)
+    public Collectable(string link, string catalogid, string name, string series, string material, decimal nominal, long circulation, string country, DateOnly date) : base(link)
     {
         Name = name;
         Date = date;
@@ -98,6 +106,7 @@ public abstract class Collectable : Base
         Nominal = nominal;
         Circulation = circulation;
         Material = material;
+        Country = country;
     }
 
     ///<summary>
@@ -133,7 +142,7 @@ public abstract class Collectable : Base
     ///<param name="link">
     ///Ссылка на источник данных
     ///</param>
-    public Collectable(Guid id, string link, string catalogid, string name, string series, string material, decimal nominal, long circulation, DateOnly date) : base(id, link)
+    public Collectable(Guid id, string link, string catalogid, string name, string series, string material, decimal nominal, long circulation, string country, DateOnly date) : base(id, link)
     {
         Name = name;
         Date = date;
@@ -142,6 +151,7 @@ public abstract class Collectable : Base
         Nominal = nominal;
         Circulation = circulation;
         Material = material;
+        Country=country;
     }
 
     ///<summary>

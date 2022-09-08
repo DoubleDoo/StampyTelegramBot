@@ -70,7 +70,7 @@ public static class Cbr
     ///</returns>
     public static async Task<List<string>> ScrapPage()
     {
-        HtmlDocument doc = Request.BalansedRequest(Cbr.BuildRequest(true, "", 2022, 0, -1, 0, 1, 1, 99, "down"));
+        HtmlDocument doc = Request.BalansedRequest(Cbr.BuildRequest(true, "", 0, 0, -1, 0, 1, 1, 99, "down"));
         HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'coins-tile_item')]/a");
         List<string> links = new List<string>();
         if (res != null)
@@ -102,7 +102,7 @@ public static class Cbr
         await Task.WhenAll(new Task[] { links, cns });
         List<string> ln = links.Result;
         List<Coin> cn = cns.Result;
-
+        Console.WriteLine("Found "+ln.Count+ " cbr coins and " + cn.Count +" already exist");
         if (cn.Count != 0)
             foreach (Coin coin in cn)
             {
@@ -139,6 +139,7 @@ public static class Cbr
                           CbrParser.GetMaterial(doc),
                           CbrParser.GetNominal(doc),
                           CbrParser.GetCirculation(doc),
+                          CbrParser.GetCountry(doc),
                           CbrParser.GetDate(doc),
                           CbrParser.GetFirstDimention(doc),
                           CbrParser.GetSecondDimention(doc),

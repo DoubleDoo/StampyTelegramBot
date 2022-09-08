@@ -5,12 +5,21 @@ public class Stamp : Collectable, IImageLoader
 {
 
     ///<summary>
-    ///Поле для хранения формата
+    ///Поле для хранения первого измерения
     ///</summary>
     ///<value>
-    ///Формат объекта
+    ///Первое измерение объекта
     ///</value>
-    public string Format { get; set; }
+    public double FirstDimension { get; set; }
+
+    ///<summary>
+    ///Поле для хранения второго измерения
+    ///</summary>
+    ///<value>
+    ///Второе измерение объекта
+    ///</value>
+    public double SecondDimension { get; set; }
+
 
     ///<summary>
     ///Поле для хранения защиты
@@ -43,14 +52,6 @@ public class Stamp : Collectable, IImageLoader
     ///Дизайн объекта
     ///</value>
     public string Design { get; set; }
-
-    ///<summary>
-    ///Поле для хранения страны
-    ///</summary>
-    ///<value>
-    ///Страна объекта
-    ///</value>
-    public string Country { get; set; }
 
     ///<summary>
     ///Поле для хранения изображения оборотной стороны объекта
@@ -123,9 +124,10 @@ public class Stamp : Collectable, IImageLoader
     ///<param name="obverse">
     ///Изображение лицевой стороны объекта
     ///</param>
-    public Stamp(string link, string catalogid, string name, string series, string material, decimal nominal, long circulation, DateOnly date, string format, string protection, string perforation, string printMetod, string design, string country, string obverse) : base(link, catalogid, name, series, material, nominal, circulation, date)
+    public Stamp(string link, string catalogid, string name, string series, string material, decimal nominal, long circulation, string country, DateOnly date, double firstdimention, double seconddimention, string protection, string perforation, string printMetod, string design,string obverse) : base(link, catalogid, name, series, material, nominal, circulation,  country, date)
     {
-        Format = format;
+        FirstDimension = firstdimention;
+        SecondDimension = seconddimention;
         Protection = protection;
         Perforation = perforation;
         PrintMetod = printMetod;
@@ -188,9 +190,10 @@ public class Stamp : Collectable, IImageLoader
     ///<param name="obverse">
     ///Изображение лицевой стороны объекта
     ///</param>
-    public Stamp(Guid id, string link, string catalogid, string name, string series, string material, decimal nominal, long circulation, DateOnly date, string format, string protection, string perforation, string printMetod, string design, string country, Guid obverse) : base(link, catalogid, name, series, material, nominal, circulation, date)
+    public Stamp(Guid id, string link, string catalogid, string name, string series, string material, decimal nominal, long circulation, string country, DateOnly date, double firstdimention, double seconddimention, string protection, string perforation, string printMetod, string design, Guid obverse) : base(link, catalogid, name, series, material, nominal, circulation,  country, date)
     {
-        Format = format;
+        FirstDimension = firstdimention;
+        SecondDimension = seconddimention;
         Protection = protection;
         Perforation = perforation;
         PrintMetod = printMetod;
@@ -229,7 +232,7 @@ public class Stamp : Collectable, IImageLoader
 
     public override string ToString()
     {
-        return "Coin: " + Id +
+        return "Stamp: " + Id +
             "\nName:" + Name +
             "\nDate:" + Date +
             "\nSeries:" + Series +
@@ -238,7 +241,8 @@ public class Stamp : Collectable, IImageLoader
             "\nCirculation:" + Circulation +
             "\nLink:" + Link +
             "\nMaterial:" + Material +
-            "\nFormat:" + Format +
+            "\nDiameter:" + FirstDimension +
+            "\nDiameter2:" + SecondDimension +
             "\nProtection:" + Protection +
             "\nPerforation:" + Perforation +
             "\nPrintMetod:" + PrintMetod +

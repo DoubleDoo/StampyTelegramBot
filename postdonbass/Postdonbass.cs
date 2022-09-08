@@ -50,7 +50,7 @@ public static class Postdonbass
     {
         string req = catalog +
         $"/{category}" +
-        $"/god-vvoda-v-oborot/2021"+//убрать
+        //$"/god-vvoda-v-oborot/2021"+//убрать
         $"?limit={limit}&page={page}";
         return req;
     }
@@ -73,7 +73,7 @@ public static class Postdonbass
             while (true)
             {
                 i++;
-                HtmlDocument doc = Request.BalansedRequest(BuildRequest(req, 24, i));
+                HtmlDocument doc = Request.BalansedRequest(BuildRequest(req, 100, i));
                 HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'caption')]/h4/a");
                 if (res!=null)
                 {
@@ -106,7 +106,7 @@ public static class Postdonbass
         await Task.WhenAll(new Task[] { links, cns });
         List<string> ln = links.Result;
         List<Stamp> cn = cns.Result;
-
+        Console.WriteLine("Found " + ln.Count + "dnr stamps and " + cn.Count + " already exist");
         if (cn.Count != 0)
             foreach (Stamp coin in cn)
             {
@@ -128,7 +128,7 @@ public static class Postdonbass
     ///Функция для создания объекта по распаршеным данным с его страницы на ресурсе
     ///</summary>
     ///<returns>
-    ///Объект Coin
+    ///Объект Stamp
     ///</returns>
     ///<param name="link">
     ///Сылка на объект
@@ -143,13 +143,14 @@ public static class Postdonbass
                           PostdonbassParser.GetMaterial(doc),
                           PostdonbassParser.GetNominal(doc),
                           PostdonbassParser.GetCirculation(doc),
+                          PostdonbassParser.GetCountry(doc),
                           PostdonbassParser.GetDate(doc),
-                          PostdonbassParser.GetFormat(doc),
+                          PostdonbassParser.GetFirstDimention(doc),
+                          PostdonbassParser.GetSecondDimention(doc),
                           PostdonbassParser.GetProtection(doc),
                           PostdonbassParser.GetPerforation(doc),
                           PostdonbassParser.GetPrintMetod(doc),
                           PostdonbassParser.GetDesign(doc),
-                          PostdonbassParser.GetCountry(doc),
                           PostdonbassParser.GetObverse(doc)
         );
         return cn;

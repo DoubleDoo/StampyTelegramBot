@@ -46,14 +46,14 @@ public static class Process
 
     private static void SetWaitTimer()
     {
-        initTimer = new System.Timers.Timer(10000);
+        initTimer = new System.Timers.Timer(30000);
         initTimer.Elapsed += WaitFinishedEvent;
         initTimer.Enabled = true;
     }
 
     private static void SetPeriodTimer()
     {
-        processTimer = new System.Timers.Timer(10000);
+        processTimer = new System.Timers.Timer(30000);
         processTimer.Elapsed += OnTimedEvent;
         processTimer.AutoReset = true;
         processTimer.Enabled = true;
@@ -83,75 +83,111 @@ public static class Process
     public static async Task getTest()
     {
         Queue<string> cbr = new Queue<string>(await Cbr.ScrapPageNew());
+        //Queue<string> cbr = new Queue<string>();
         Queue<string> postdonbass = new Queue<string>(await Postdonbass.ScrapPageNew());
 
         List<Coin> coins = new List<Coin>();
         List<Stamp> stamps = new List<Stamp>();
 
+        List<string> errorParse = new List<string>();
+        List<string> errorPublic = new List<string>();
+
         int i = 0;
-        int total = cbr.Count+postdonbass.Count;
+        int total = cbr.Count + postdonbass.Count;
+        List<Task> tasks = new List<Task>();
         while (cbr.Count + postdonbass.Count > 0)
         {
-            List<Task> tasks = new List<Task>();
             if (cbr.Count > 0)
             {
                 i++;
-                tasks.Add(Cbr.Create(cbr.Dequeue()));
+                string ss = cbr.Dequeue();
+                Console.WriteLine(ss);
+                try
+                {
+                    tasks.Add(Cbr.Create(ss));
+                }
+                catch
+                {
+                    errorParse.Add(ss);
+                }
             }
             if (postdonbass.Count > 0)
             {
                 i++;
-                tasks.Add(Postdonbass.Create(postdonbass.Dequeue()));
+                string sss = postdonbass.Dequeue();
+                Console.WriteLine(sss);
+                try
+                {
+                    tasks.Add(Postdonbass.Create(sss));
+                }
+                catch
+                {
+                    errorParse.Add(sss);
+                }
             }
             Console.WriteLine(i + ":" + total);
             await Task.WhenAll(tasks.ToArray());
-
-            foreach (Task task in tasks)
+            Console.WriteLine("____________________");
+        }
+        foreach (Task task in tasks)
+        {
+            Console.WriteLine("Осталось элементов : " + (tasks.Count - stamps.Count - coins.Count) + "/" + tasks.Count);
+            if (task.GetType().ToString().IndexOf("Stamp") >= 0)
             {
-                if (task.GetType().ToString().IndexOf("Stamp") >= 0)
+                Stamp stamp = ((Task<Stamp>)task).Result;
+                try
                 {
-                    Stamp stamp = ((Task<Stamp>)task).Result;
-                    Console.WriteLine(stamp.ToString());
-                    stamps.Add(stamp);
+                    await ProcessStamp(stamp, Postdonbass.channel);
                 }
-                if (task.GetType().ToString().IndexOf("Coin") >= 0)
+                catch
                 {
-                    Coin coin = ((Task<Coin>)task).Result;
-                    Console.WriteLine(coin.ToString());
-                    coins.Add(coin);
+                    errorPublic.Add(stamp.Link);
                 }
+                stamps.Add(stamp);
+            }
+            if (task.GetType().ToString().IndexOf("Coin") >= 0)
+            {
+                Coin coin = ((Task<Coin>)task).Result;
+                try
+                {
+                    await ProcessCoin(coin, Cbr.channel);
+                }
+                catch
+                {
+                    errorPublic.Add(coin.Link);
+                }
+                coins.Add(coin);
             }
             Console.WriteLine("____________________");
         }
-
-        Console.WriteLine("Итого марок : "+stamps.Count);
-        Console.WriteLine("Итого монет : " + coins.Count);
-
-        i = 0;
-        total = coins.Count;
-        foreach (Coin coin in coins)
+        Console.WriteLine("Ошибки публикации");
+        foreach (string error in errorPublic)
         {
-            List<Task> tsk = new List<Task>();
-            i++;
-            tsk.Add(coin.Post(Cbr.channel));
-            tsk.Add(coin.Load());
-            Console.WriteLine(i + ":" + total);
-            await Task.WhenAll(tsk.ToArray());
-            await Task.Delay(1000);
+            Console.WriteLine(error);
         }
-        i = 0;
-        total = stamps.Count;
-        foreach (Stamp stamp in stamps)
+        Console.WriteLine("Ошибки парсинга");
+        foreach (string error in errorPublic)
         {
-            List<Task> tsk = new List<Task>();
-            i++;
-            tsk.Add(stamp.Post(Postdonbass.channel));
-            tsk.Add(stamp.Load());
-            Console.WriteLine(i + ":" + total);
-            await Task.WhenAll(tsk.ToArray());
-            await Task.Delay(1000);
+            Console.WriteLine(error);
         }
     }
+
+    public static async Task ProcessCoin(Coin coin, TelegramChannel ch)
+    {
+        Console.WriteLine(coin.ToString());
+        await coin.Load();
+        await coin.Post(ch);
+        await Task.Delay(1500);
+    }
+
+    public static async Task ProcessStamp(Stamp stamp, TelegramChannel ch)
+    {
+        Console.WriteLine(stamp.ToString());
+        await stamp.Load();
+        await stamp.Post(ch);
+        await Task.Delay(1500);
+    }
+
 }
 
 

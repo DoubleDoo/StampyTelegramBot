@@ -67,12 +67,17 @@ public static class PostgreSQLSingle
     ///<returns>
     ///Асинхронная задача
     ///</returns>
+    ///
+
+
     public static async Task ConnectToDb()
     {
         string ConnectionString = $"Host={host};Port={port};Username={login};Password={password};Database={dataBase}";
         dbConnection = new NpgsqlConnection(ConnectionString);
         await dbConnection.OpenAsync();
     }
+
+
 
     ///<summary>
     ///Асинхронная функция запроса к базе данных

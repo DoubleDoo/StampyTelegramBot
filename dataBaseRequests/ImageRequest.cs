@@ -52,6 +52,7 @@ public static class ImageRequest
     ///</param>
     public static async Task<Image> Get(Guid id)
     {
+        Console.WriteLine("Begin image db req");
         NpgsqlDataReader rd = await PostgreSQLSingle.SendSQL("SELECT * FROM public.\"" + tableName + "\" where id='" + id + "'");
         Image res = null;
         while (rd.Read())
@@ -59,6 +60,7 @@ public static class ImageRequest
             res = new Image(rd.GetGuid(rd.GetOrdinal("id")), rd.GetString(rd.GetOrdinal("link")));
         }
         await rd.DisposeAsync();
+        Console.WriteLine("End image db req");
         return res;
     }
 
@@ -70,6 +72,7 @@ public static class ImageRequest
     ///</returns>
     public static async Task<List<Image>> Get()
     {
+        Console.WriteLine("Begin images db req");
         NpgsqlDataReader rd = await PostgreSQLSingle.SendSQL("SELECT * FROM public.\"" + tableName + "\"");
         List<Image> list = new List<Image>();
         while (rd.Read())
@@ -77,6 +80,7 @@ public static class ImageRequest
             list.Add(new Image(rd.GetGuid(rd.GetOrdinal("id")), rd.GetString(rd.GetOrdinal("link"))));
         }
         await rd.DisposeAsync();
+        Console.WriteLine("End images db req");
         return list;
     }
 }

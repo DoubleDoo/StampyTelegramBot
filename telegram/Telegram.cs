@@ -1,11 +1,19 @@
 ﻿using System;
 using WTelegram;
 using TL;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Threading;
+using System.Threading.Tasks;
 
 
 public static class Telegram
 {
-    private static WTelegram.Client clnt;
+    public static WTelegram.Client clnt;
     public static TL.User usr;
     static string Config(string what)
     {
@@ -42,13 +50,13 @@ public static class Telegram
         List<InputMedia> media = new List<InputMedia>();
         foreach (Image im in imgs)
         {
+
             var file = await clnt.UploadFileAsync(@"" + Environment.CurrentDirectory + "/data/img/" + im.Id + ".jpg", null);
-            media.Add(new InputMediaUploadedPhoto { file = file });
+            media.Add(new InputMediaUploadedPhoto { file = file});
         }
         var entities = clnt.HtmlToEntities(ref msg);
         await clnt.SendAlbumAsync((InputPeer)channel, media.ToArray(), msg, entities: entities);
     }
-
 
     public static async Task<List<ChatBase>> GetAllDialogs()
     {
@@ -118,5 +126,6 @@ public static class Telegram
         InputChatUploadedPhoto photo = new InputChatUploadedPhoto() { file = fp };
         photo.flags = InputChatUploadedPhoto.Flags.has_file;
         await clnt.Channels_EditPhoto(channel, photo);
+        // 400 PHOTO_SAVE_FILE_INVALID
     }
 }

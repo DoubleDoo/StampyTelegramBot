@@ -32,7 +32,7 @@ public static class StampRequest
     ///</param>
     public static async Task<Stamp> Create(Stamp obj)
     {
-        NpgsqlDataReader rd = await PostgreSQLSingle.SendSQL($"INSERT INTO public.\"" + tableName + "\"(id, name, date, catalogid, series, nominal, format, protection, circulation, perforation, material, printmetod, design, country, obverse, link)" +
+        NpgsqlDataReader rd = await PostgreSQLSingle.SendSQL($"INSERT INTO public.\"" + tableName + "\"(id, name, date, catalogid, series, nominal, firstDimention, secondDimention, protection, circulation, perforation, material, printmetod, design, country, obverse, link)" +
         "VALUES(" +
             $"'{ obj.Id.ToString() }'," +
             $"'{ obj.Name }'," +
@@ -40,7 +40,8 @@ public static class StampRequest
             $"'{ obj.CatalogId }'," +
             $"'{ obj.Series }'," +
             $"'{ obj.Nominal.ToString() }'," +
-            $"'{ obj.Format }'," +
+            $"'{ obj.FirstDimension }'," +
+            $"'{ obj.SecondDimension }'," +
             $"'{ obj.Protection }'," +
             $"'{ obj.Circulation.ToString() }'," +
             $"'{ obj.Perforation }'," +
@@ -70,6 +71,7 @@ public static class StampRequest
         Stamp res = null;
         while (rd.Read())
         {
+            Console.WriteLine("Begin stamp db req");
             res = new Stamp(rd.GetGuid(rd.GetOrdinal("id")),
                             rd.GetString(rd.GetOrdinal("link")),
                             rd.GetString(rd.GetOrdinal("catalogid")),
@@ -78,18 +80,20 @@ public static class StampRequest
                             rd.GetString(rd.GetOrdinal("material")),
                             rd.GetDecimal(rd.GetOrdinal("nominal")),
                             rd.GetInt64(rd.GetOrdinal("circulation")),
+                            rd.GetString(rd.GetOrdinal("country")),
                             (DateOnly)rd.GetDate(rd.GetOrdinal("date")),
-                            rd.GetString(rd.GetOrdinal("format")),
+                            rd.GetDouble(rd.GetOrdinal("firstDimention")),
+                            rd.GetDouble(rd.GetOrdinal("secondDimention")),
                             rd.GetString(rd.GetOrdinal("protection")),
                             rd.GetString(rd.GetOrdinal("perforation")),
                             rd.GetString(rd.GetOrdinal("printMetod")),
                             rd.GetString(rd.GetOrdinal("design")),
-                            rd.GetString(rd.GetOrdinal("country")),
                             rd.GetGuid(rd.GetOrdinal("obverse"))
                             );
         }
         await rd.DisposeAsync();
         await res.AppendImages();
+        Console.WriteLine("End stamp db req");
         return res;
     }
 
@@ -101,6 +105,7 @@ public static class StampRequest
     ///</returns>
     public static async Task<List<Stamp>> Get()
     {
+        Console.WriteLine("Start stamps db req");
         NpgsqlDataReader rd = await PostgreSQLSingle.SendSQL("SELECT * FROM public.\"" + tableName + "\"");
         List<Stamp> list = new List<Stamp>();
         while (rd.Read())
@@ -113,18 +118,20 @@ public static class StampRequest
                                rd.GetString(rd.GetOrdinal("material")),
                                rd.GetDecimal(rd.GetOrdinal("nominal")),
                                rd.GetInt64(rd.GetOrdinal("circulation")),
+                               rd.GetString(rd.GetOrdinal("country")),
                                (DateOnly)rd.GetDate(rd.GetOrdinal("date")),
-                               rd.GetString(rd.GetOrdinal("format")),
+                               rd.GetDouble(rd.GetOrdinal("firstDimention")),
+                               rd.GetDouble(rd.GetOrdinal("secondDimention")),
                                rd.GetString(rd.GetOrdinal("protection")),
                                rd.GetString(rd.GetOrdinal("perforation")),
                                rd.GetString(rd.GetOrdinal("printMetod")),
                                rd.GetString(rd.GetOrdinal("design")),
-                               rd.GetString(rd.GetOrdinal("country")),
                                rd.GetGuid(rd.GetOrdinal("obverse"))
                                ));
         }
         await rd.DisposeAsync();
-        list.ForEach(x => x.AppendImages());
+        //list.ForEach(x => x.AppendImages());
+        Console.WriteLine("End stamps db req");
         return list;
     }
 }

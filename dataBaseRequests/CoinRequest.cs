@@ -32,7 +32,7 @@ public static class CoinRequest
     ///</param>
     public static async Task<Coin> Create(Coin obj)
     {
-        NpgsqlDataReader rd = await PostgreSQLSingle.SendSQL($"INSERT INTO public.\"" + tableName + "\"(id, name, date, series, catalogid, nominal, firstDimention, secondDimention, material, circulation, obverse, reverse, link)" +
+        NpgsqlDataReader rd = await PostgreSQLSingle.SendSQL($"INSERT INTO public.\"" + tableName + "\"(id, name, date, series, catalogid, nominal, firstDimention, secondDimention, material, circulation,country, obverse, reverse, link)" +
         "VALUES(" +
             $"'{ obj.Id.ToString() }'," +
             $"'{ obj.Name }'," +
@@ -44,6 +44,7 @@ public static class CoinRequest
             $"'{ obj.SecondDimension.ToString() }'," +
             $"'{ obj.Material }'," +
             $"'{ obj.Circulation.ToString() }'," +
+            $"'{ obj.Country }'," +
             $"'{ obj.Obverse.Id.ToString() }'," +
             $"'{ obj.Reverse.Id.ToString() }'," +
             $"'{ obj.Link }'" +
@@ -63,6 +64,7 @@ public static class CoinRequest
     ///</param>
     public static async Task<Coin> Get(Guid id)
     {
+        Console.WriteLine("Begin coin db req");
         NpgsqlDataReader rd = await PostgreSQLSingle.SendSQL("SELECT * FROM public.\"" + tableName + "\" where id='" + id + "'");
         Coin res = null;
         while (rd.Read())
@@ -75,15 +77,17 @@ public static class CoinRequest
                            rd.GetString(rd.GetOrdinal("material")),
                            rd.GetDecimal(rd.GetOrdinal("nominal")),
                            rd.GetInt64(rd.GetOrdinal("circulation")),
+                           rd.GetString(rd.GetOrdinal("country")),
                            (DateOnly)rd.GetDate(rd.GetOrdinal("date")),
                            rd.GetDouble(rd.GetOrdinal("firstDimention")),
-                           rd.GetDouble(rd.GetOrdinal("secondDimention")),
+                           rd.GetDouble(rd.GetOrdinal("secondDimention")),                           
                            rd.GetGuid(rd.GetOrdinal("obverse")),
                            rd.GetGuid(rd.GetOrdinal("reverse"))
                            );
         }
         await rd.DisposeAsync();
         await res.AppendImages();
+        Console.WriteLine("End coin db req");
         return res;
     }
 
@@ -95,6 +99,7 @@ public static class CoinRequest
     ///</returns>
     public static async Task<List<Coin>> Get()
     {
+        Console.WriteLine("Begin coins db req");
         NpgsqlDataReader rd = await PostgreSQLSingle.SendSQL("SELECT * FROM public.\"" + tableName + "\"");
         List<Coin> list = new List<Coin>();
         while (rd.Read())
@@ -107,6 +112,7 @@ public static class CoinRequest
                            rd.GetString(rd.GetOrdinal("material")),
                            rd.GetDecimal(rd.GetOrdinal("nominal")),
                            rd.GetInt64(rd.GetOrdinal("circulation")),
+                           rd.GetString(rd.GetOrdinal("country")),
                            (DateOnly)rd.GetDate(rd.GetOrdinal("date")),
                            rd.GetDouble(rd.GetOrdinal("firstDimention")),
                            rd.GetDouble(rd.GetOrdinal("secondDimention")),
@@ -115,7 +121,8 @@ public static class CoinRequest
                            ));
         }
         await rd.DisposeAsync();
-        list.ForEach(x => x.AppendImages());
+        //list.ForEach(x => x.AppendImages());
+        Console.WriteLine("End coins db req");
         return list;
     }
 }

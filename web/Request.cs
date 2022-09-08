@@ -2,8 +2,8 @@
 
 public static class Request
 {
-    private static string myProxyIP = "193.23.50.233";
-    private static int myPort = 10185;
+    private static string myProxyIP = "213.108.196.185";
+    private static int myPort = 10267;
     private static string userId = "dodubina";
     private static string password = "7140043";
     private static HtmlWeb web;

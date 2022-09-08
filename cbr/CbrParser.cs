@@ -18,22 +18,14 @@ public static class CbrParser
     ///</param>
     public static string GetName(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNode res = doc.DocumentNode.SelectSingleNode("//span[contains(@class, 'referenceable')]");
-            return ParseName(res.InnerText);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNode is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
+            if (res != null)
+            {
+                return ParseName(res.InnerText);
+            }
+            return "0";
         }
         return "-1";
     }
@@ -49,20 +41,7 @@ public static class CbrParser
     ///</param>
     public static string ParseName(string str)
     {
-        string buffer = str;
-        try
-        {
-            return Parser.ParseString(buffer);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex, str);
-        }
-        return "-1";
+        return Parser.ParseString(str);
     }
 
     ///<summary>
@@ -76,28 +55,20 @@ public static class CbrParser
     ///</param>
     public static DateOnly GetDate(HtmlDocument doc)
     {
-        try
+
+        if (doc != null)
         {
             HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'money_option_title')]");
-            foreach (HtmlNode node in res)
+            if (res != null)
             {
-                if (node.InnerText.Contains("Дата выпуска"))
+                foreach (HtmlNode node in res)
                 {
-                    return ParseDate(node.SelectSingleNode("..//div[contains(@class, 'money_option_value')]").InnerText);
+                    if (node.InnerText.Contains("Дата выпуска"))
+                    {
+                        return ParseDate(node.SelectSingleNode("..//div[contains(@class, 'money_option_value')]").InnerText);
+                    }
                 }
             }
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNodeCollection is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
         }
         return new DateOnly(2222, 2, 22);
     }
@@ -113,20 +84,7 @@ public static class CbrParser
     ///</param>
     public static DateOnly ParseDate(string str)
     {
-        string buffer = str;
-        try
-        {
-            return Parser.ParseDate(buffer);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex, str);
-        }
-        return new DateOnly(2222, 2, 22);
+        return Parser.ParseDate(str);
     }
 
     ///<summary>
@@ -140,28 +98,20 @@ public static class CbrParser
     ///</param>
     public static string GetSeries(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'commemor-coin_intro_text')]");
-            foreach (HtmlNode node in res)
+            if (res != null)
             {
-                if (node.InnerText.Contains("Серия"))
+                foreach (HtmlNode node in res)
                 {
-                    return ParseSeries(node.InnerText);
+                    if (node.InnerText.Contains("Серия"))
+                    {
+                        return ParseSeries(node.InnerText);
+                    }
                 }
             }
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNodeCollection is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
+            return "0";
         }
         return "-1";
     }
@@ -177,22 +127,9 @@ public static class CbrParser
     ///</param>
     public static string ParseSeries(string str)
     {
-        string buffer = str;
-        try
-        {
-            buffer = buffer.Replace("Серия:", "");
-            buffer = buffer.Replace("Cерия", "");
-            return Parser.ParseString(buffer);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex, str);
-        }
-        return "-1";
+        str = str.Replace("Серия:", "");
+        str = str.Replace("Cерия", "");
+        return Parser.ParseString(str);
     }
 
     ///<summary>
@@ -206,28 +143,20 @@ public static class CbrParser
     ///</param>
     public static string GetCatalogId(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'money_option_title')]");
-            foreach (HtmlNode node in res)
+            if (res != null)
             {
-                if (node.InnerText.Contains("Каталожный номер"))
+                foreach (HtmlNode node in res)
                 {
-                    return ParseCatalogId(node.SelectSingleNode("..//div[contains(@class, 'money_option_value')]").InnerText);
+                    if (node.InnerText.Contains("Каталожный номер"))
+                    {
+                        return ParseCatalogId(node.SelectSingleNode("..//div[contains(@class, 'money_option_value')]").InnerText);
+                    }
                 }
             }
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNodeCollection is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
+            return "0";
         }
         return "-1";
     }
@@ -243,20 +172,7 @@ public static class CbrParser
     ///</param>
     public static string ParseCatalogId(string str)
     {
-        string buffer = str;
-        try
-        {
-            return Parser.ParseString(buffer);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex, str);
-        }
-        return "-1";
+        return Parser.ParseString(str);
     }
 
     ///<summary>
@@ -270,28 +186,20 @@ public static class CbrParser
     ///</param>
     public static decimal GetNominal(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'characteristic_denomenation')]");
-            foreach (HtmlNode node in res)
+            if (res != null)
             {
-                if (node.InnerText.Contains("Номинал"))
+                foreach (HtmlNode node in res)
                 {
-                    return ParseNominal(node.SelectSingleNode("..//div[contains(@class, 'characteristic_value')]").InnerText);
+                    if (node.InnerText.Contains("Номинал"))
+                    {
+                        return ParseNominal(node.SelectSingleNode("..//div[contains(@class, 'characteristic_value')]").InnerText);
+                    }
                 }
             }
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNodeCollection is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
+            return 0;
         }
         return -1;
     }
@@ -307,20 +215,7 @@ public static class CbrParser
     ///</param>
     public static decimal ParseNominal(string str)
     {
-        string buffer = str;
-        try
-        {
-            return Parser.ParseDecimal(buffer);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex, str);
-        }
-        return -1;
+        return Parser.ParseDecimal(str);
     }
 
     ///<summary>
@@ -334,28 +229,21 @@ public static class CbrParser
     ///</param>
     public static double GetFirstDimention(HtmlDocument doc)
     {
-        try
+
+        if (doc != null)
         {
             HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'characteristic_denomenation')]");
-            foreach (HtmlNode node in res)
+            if (res != null)
             {
-                if (node.InnerText.Contains("Диаметр") || node.InnerText.Contains("Длина"))
+                foreach (HtmlNode node in res)
                 {
-                    return ParseDimention(node.SelectSingleNode("..//div[contains(@class, 'characteristic_value')]").InnerText);
+                    if (node.InnerText.Contains("Диаметр") || node.InnerText.Contains("Длина"))
+                    {
+                        return ParseDimention(node.SelectSingleNode("..//div[contains(@class, 'characteristic_value')]").InnerText);
+                    }
                 }
             }
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNodeCollection is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
+            return 0;
         }
         return -1;
     }
@@ -371,28 +259,20 @@ public static class CbrParser
     ///</param>
     public static double GetSecondDimention(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'characteristic_denomenation')]");
-            foreach (HtmlNode node in res)
+            if (res != null)
             {
-                if (node.InnerText.Contains("Ширина"))
+                foreach (HtmlNode node in res)
                 {
-                    return ParseDimention(node.SelectSingleNode("..//div[contains(@class, 'characteristic_value')]").InnerText);
+                    if (node.InnerText.Contains("Ширина"))
+                    {
+                        return ParseDimention(node.SelectSingleNode("..//div[contains(@class, 'characteristic_value')]").InnerText);
+                    }
                 }
             }
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNodeCollection is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
+            return 0;
         }
         return -1;
     }
@@ -408,20 +288,7 @@ public static class CbrParser
     ///</param>
     public static double ParseDimention(string str)
     {
-        string buffer = str;
-        try
-        {
-            return Parser.ParseDouble(buffer);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex, str);
-        }
-        return -1;
+       return Parser.ParseDouble(str);
     }
 
     ///<summary>
@@ -435,28 +302,20 @@ public static class CbrParser
     ///</param>
     public static string GetMaterial(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'characteristic_denomenation')]");
-            foreach (HtmlNode node in res)
+            if (res != null)
             {
-                if (node.InnerText.Contains("Сплав") || node.InnerText.Contains("Материал") || node.InnerText.Contains("Металл"))
+                foreach (HtmlNode node in res)
                 {
-                    return parseMaterial(node.SelectSingleNode("..//div[contains(@class, 'characteristic_value')]").InnerText);
+                    if (node.InnerText.Contains("Сплав") || node.InnerText.Contains("Материал") || node.InnerText.Contains("Металл"))
+                    {
+                        return parseMaterial(node.SelectSingleNode("..//div[contains(@class, 'characteristic_value')]").InnerText);
+                    }
                 }
+                return "0";
             }
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNodeCollection is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
         }
         return "-1";
     }
@@ -472,20 +331,7 @@ public static class CbrParser
     ///</param>
     public static string parseMaterial(string str)
     {
-        string buffer = str;
-        try
-        {
-            return Parser.ParseString(buffer);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex, str);
-        }
-        return "-1";
+        return Parser.ParseString(str);
     }
 
     ///<summary>
@@ -499,28 +345,20 @@ public static class CbrParser
     ///</param>
     public static long GetCirculation(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNodeCollection res = doc.DocumentNode.SelectNodes("//div[contains(@class, 'characteristic_denomenation')]");
-            foreach (HtmlNode node in res)
+            if (res != null)
             {
-                if (node.InnerText.Contains("Тираж"))
+                foreach (HtmlNode node in res)
                 {
-                    return ParseCirculation(node.SelectSingleNode("..//div[contains(@class, 'characteristic_value')]").InnerText);
+                    if (node.InnerText.Contains("Тираж"))
+                    {
+                        return ParseCirculation(node.SelectSingleNode("..//div[contains(@class, 'characteristic_value')]").InnerText);
+                    }
                 }
             }
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNodeCollection is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
+            return 0;
         }
         return -1;
     }
@@ -536,20 +374,8 @@ public static class CbrParser
     ///</param>
     public static long ParseCirculation(string str)
     {
-        string buffer = str;
-        try
-        {
-            return Parser.ParseLong(buffer);
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex, str);
-        }
-        return -1;
+        str = str.Replace(" ", "");
+        return Parser.ParseLong(str);
     }
 
     ///<summary>
@@ -563,22 +389,14 @@ public static class CbrParser
     ///</param>
     public static string GetObverse(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNodeCollection res = doc.DocumentNode.SelectNodes(".//div[contains(@class, 'commemor-coin_images')]");
-            return Cbr.linkBase + res[0].SelectNodes(".//img")[0].GetAttributeValue("src", "");
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNodeCollection is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
+            if (res != null)
+            {
+                return Cbr.linkBase + res[0].SelectNodes(".//img")[0].GetAttributeValue("src", "");
+            }
+            return "0";
         }
         return "-1";
     }
@@ -594,24 +412,43 @@ public static class CbrParser
     ///</param>
     public static string GetReverse(HtmlDocument doc)
     {
-        try
+        if (doc != null)
         {
             HtmlNodeCollection res = doc.DocumentNode.SelectNodes(".//div[contains(@class, 'commemor-coin_images')]");
-            return Cbr.linkBase + res[0].SelectNodes(".//img")[1].GetAttributeValue("src", "");
-        }
-        catch (ArgumentNullException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "Argument str is null");
-        }
-        catch (NullReferenceException ex)
-        {
-            ExceptionMessage.ExceptionString(ex, "HtmlNodeCollection is null (data not found)");
-        }
-        catch (Exception ex)
-        {
-            ExceptionMessage.UnknownExceptionString(ex);
+            if (res != null)
+            {
+                return Cbr.linkBase + res[0].SelectNodes(".//img")[1].GetAttributeValue("src", "");
+            }
+            return "0";
         }
         return "-1";
     }
 
+    ///<summary>
+    ///Функция для получения данных для поля Coin.Country с интернет страницы объекта
+    ///</summary>
+    ///<remarks>
+    ///Функция ищет на странице нужные данные и преобразует в строку для их дальнейшей обработки
+    ///</remarks>
+    ///<param name="doc">
+    ///HtmlDocument страницы с данными
+    ///</param>
+    public static string GetCountry(HtmlDocument doc)
+    {
+        return ParseCountry("Российская федерация");
+    }
+
+    ///<summary>
+    ///Функция обработки данных для поля Coin.Country
+    ///</summary>
+    ///<remarks>
+    ///Функция обрабатывает строковое представление информации, для дальнейшего хранения
+    ///</remarks>
+    ///<param name="str">
+    ///Строка для обработки
+    ///</param>
+    public static string ParseCountry(string str)
+    {
+        return Parser.ParseString(str);
+    }
 }
