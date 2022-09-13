@@ -384,6 +384,10 @@ public static class PostdonbassParser
         {
             str = str.Split("×")[0];
         }
+        else if (str.IndexOf("X") >= 0)
+        {
+            str = str.Split("X")[0];
+        }
         Console.WriteLine(str);
         return double.Parse(Parser.ParseLong(str).ToString());
     }
@@ -445,6 +449,10 @@ public static class PostdonbassParser
         else if (str.IndexOf("×") >= 0)
         {
             str = str.Split("×")[1];
+        }
+        else if (str.IndexOf("X") >= 0)
+        {
+            str = str.Split("X")[1];
         }
         Console.WriteLine(str);
         return double.Parse(Parser.ParseLong(str).ToString());

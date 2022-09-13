@@ -45,6 +45,17 @@ public static class Request
         HtmlDocument doc = web.Load(link, myProxyIP, myPort, userId, password);
         return doc;
     }
+
+    public static HtmlDocument UaProxyRequest(string link)
+    {
+        HtmlDocument doc = web.Load(link, "145.239.27.90", 10149, userId, password);
+        return doc;
+    }
+    public static HtmlDocument EuProxyRequest(string link)
+    {
+        HtmlDocument doc = web.Load(link, "162.19.130.108", 10169, userId, password);
+        return doc;
+    }
 }
 
 

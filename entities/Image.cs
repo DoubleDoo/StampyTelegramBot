@@ -61,19 +61,26 @@ public class Image : Base
     private async Task DownloadImage(Guid id)
     {
         string path = Environment.CurrentDirectory + "/data/img/" + id+ ".jpg";
-        string buffer = Environment.CurrentDirectory + "/data/img/" +"buffer" + ".jpg";
+        //string buffer = Environment.CurrentDirectory + "/data/img/" +"buffer" + ".jpg";
 
         WebClient client = new WebClient();
         await client.DownloadFileTaskAsync(new Uri(Link), path);
 
         SixLabors.ImageSharp.Image img = SixLabors.ImageSharp.Image.Load(path);
+        double length = (double)new System.IO.FileInfo(path).Length / 1024 / 1024;
 
-        if(img.Width > 1280 || img.Height > 1280)
+        if (img.Width+img.Height > 10000)
         {
-            Console.WriteLine(id+" Resizing...");
-            double diff = new double[] { img.Width, img.Height }.Max() / (double) 1280;
-            img.Mutate(x => x.Resize((int)Math.Round(img.Width / diff), (int)Math.Round(img.Height / diff), KnownResamplers.Lanczos3));
+            double kf = (double)10000 / (double)(img.Width + img.Height) - 0.01;
+            img.Mutate(x => x.Resize((int)Math.Round(img.Width*kf), (int)Math.Round(img.Height*kf), KnownResamplers.Lanczos3));
             img.Save(path);
+            length = (double)new System.IO.FileInfo(path).Length / 1024 / 1024;
+            while (length >= 10)
+            {
+                img.Mutate(x => x.Resize((int)Math.Round(img.Width * 0.95), (int)Math.Round(img.Height * 0.95), KnownResamplers.Lanczos3));
+                img.Save(path);
+                length = (double)new System.IO.FileInfo(path).Length / 1024 / 1024;
+            }
         }
 
         /*
@@ -83,8 +90,8 @@ public class Image : Base
         Console.WriteLine(qual + ":" + length);
         if (length >= 10 && qual>= step)
         {
-            var img = SixLabors.ImageSharp.Image.Load(path);
-            while (length >= 3 && qual >= step)
+            img = SixLabors.ImageSharp.Image.Load(path);
+            while (length >= 10 && qual >= step)
             {
                 qual = qual - step;
                 FileStream outImage = File.Create(buffer);
@@ -98,6 +105,14 @@ public class Image : Base
             await img.SaveAsJpegAsync(outI);
             outI.Close();
             File.Delete(buffer);
-        }*/
+        }
+        */
+
+        //img = SixLabors.ImageSharp.Image.Load(path);
+        //Console.WriteLine("SUM:" + (img.Width + img.Height));
+        //Console.WriteLine("W:" + img.Width);
+        //Console.WriteLine("H:" + img.Height);
+        //length = (double)new System.IO.FileInfo(path).Length / 1024 / 1024;
+        //Console.WriteLine("Weight:" + length);
     }
 }

@@ -50,7 +50,6 @@ public static class Telegram
         List<InputMedia> media = new List<InputMedia>();
         foreach (Image im in imgs)
         {
-
             var file = await clnt.UploadFileAsync(@"" + Environment.CurrentDirectory + "/data/img/" + im.Id + ".jpg", null);
             media.Add(new InputMediaUploadedPhoto { file = file});
         }

@@ -137,7 +137,7 @@ public static class Postdonbass
     {
         HtmlDocument doc = Request.BalansedRequest(link);
         Stamp cn = new Stamp(link,
-                          PostdonbassParser.GetCatalogId(doc),
+                           PostdonbassParser.GetCatalogId(doc),
                           PostdonbassParser.GetName(doc),
                           PostdonbassParser.GetSeries(doc),
                           PostdonbassParser.GetMaterial(doc),

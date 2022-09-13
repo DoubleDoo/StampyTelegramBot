@@ -1,4 +1,5 @@
-﻿using System.Timers;
+﻿using HtmlAgilityPack;
+using System.Timers;
 
 public static class Process
 {
@@ -15,6 +16,8 @@ public static class Process
         await PostgreSQLSingle.ConnectToDb();
         await Cbr.channel.Update();
         await Postdonbass.channel.Update();
+        await Ukrposhta.channel.Update();
+        await PochtaLnr.channel.Update();
         await UpdateImageCatalog();
         Console.WriteLine("Initialization finished");
     }
@@ -83,7 +86,7 @@ public static class Process
     public static async Task getTest()
     {
         Queue<string> cbr = new Queue<string>(await Cbr.ScrapPageNew());
-        //Queue<string> cbr = new Queue<string>();
+        Queue<HtmlNode> postpochtalnr = new Queue<HtmlNode>(await PochtaLnr.ScrapPageNew());
         Queue<string> postdonbass = new Queue<string>(await Postdonbass.ScrapPageNew());
 
         List<Coin> coins = new List<Coin>();
@@ -93,9 +96,9 @@ public static class Process
         List<string> errorPublic = new List<string>();
 
         int i = 0;
-        int total = cbr.Count + postdonbass.Count;
+        int total = cbr.Count + postdonbass.Count + postpochtalnr.Count;
         List<Task> tasks = new List<Task>();
-        while (cbr.Count + postdonbass.Count > 0)
+        while (cbr.Count + postdonbass.Count + postpochtalnr.Count > 0)
         {
             if (cbr.Count > 0)
             {
@@ -123,6 +126,20 @@ public static class Process
                 catch
                 {
                     errorParse.Add(sss);
+                }
+            }
+            if (postpochtalnr.Count > 0)
+            {
+                i++;
+                HtmlNode ssss = postpochtalnr.Dequeue();
+                Console.WriteLine(ssss);
+                try
+                {
+                    tasks.Add(PochtaLnr.Create(ssss));
+                }
+                catch
+                {
+                    errorParse.Add("postpochtalnr");
                 }
             }
             Console.WriteLine(i + ":" + total);
